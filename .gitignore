@@ -7,6 +7,11 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/Dotnet.gitignore
 
+# Visual Studio local workspace
+.vs/
+*.user
+*.suo
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
