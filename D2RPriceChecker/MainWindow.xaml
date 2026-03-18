@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:D2RPriceChecker"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1600">
+        Title="MainWindow" Height="800" Width="1600">    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*" />    <!-- 60% -->
@@ -23,9 +23,9 @@
                 <TextBlock Text="Image Path:" VerticalAlignment="Center" Margin="0,0,5,0"/>
                 <TextBox Name="ImagePathTextBox" Width="650" Margin="0,0,5,0"/>
                 <Button Content="Browse" Click="BrowseImages_Click" Width="80" Margin="0,0,5,0"/>
-                <Button Content="←" Click="PrevImage_Click" Width="30" Margin="0,0,5,0"/>
-                <Button Content="→" Click="NextImage_Click" Width="30" Margin="0,0,5,0"/>
-                <Button Content="Process" Click="ProcessImage_Click" Width="80" Margin="0,0,5,0"/>
+                <Button Content="←" Click="LeftButton_Click" Width="30" Margin="0,0,5,0"/>
+                <Button Content="→" Click="RightButton_Click" Width="30" Margin="0,0,5,0"/>
+                <Button Content="Process" Click="ProcessButton_Click" Width="80" Margin="0,0,5,0"/>
             </StackPanel>
 
 

@@ -24,6 +24,26 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        this.PreviewKeyDown += MainWindow_PreviewKeyDown;
+    }
+
+    private void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        switch (e.Key)
+        { 
+            case Key.Left:
+                LeftButton_Click(this, null);
+                e.Handled = true;
+                break;
+            case Key.Right:
+                RightButton_Click(this, null);
+                e.Handled = true;
+                break;
+            case Key.Space:
+                ProcessButton_Click(this, null);
+                e.Handled = true; // prevent the focused button from being "clicked"
+                break;
+        }
     }
 
     protected override void OnSourceInitialized(EventArgs e)
@@ -69,25 +89,10 @@ public partial class MainWindow : Window
             _currentImageIndex = 0;
 
             LoadCurrentImage();
+          
         }
-    }
 
-    private void PrevImage_Click(object sender, RoutedEventArgs e)
-    {
-        if(_currentImageIndex > 0)
-        {
-            _currentImageIndex--;
-            LoadCurrentImage();
-        }
-    }
-
-    private void NextImage_Click(object sender, RoutedEventArgs e)
-    {
-        if(_currentImageIndex < _imagePaths.Count - 1)
-        {
-            _currentImageIndex++;
-            LoadCurrentImage();
-        }
+        this.Focus(); // window gets focus
     }
 
     private void LoadCurrentImage()
@@ -104,11 +109,28 @@ public partial class MainWindow : Window
         ScreenshotImageControl.Source = _loadedImage;
     }
 
-    private void ProcessImage_Click(object sender, RoutedEventArgs e)
+    private void LeftButton_Click(object sender, RoutedEventArgs e)
+    {
+        if(_currentImageIndex > 0)
+        {
+            _currentImageIndex--;
+            LoadCurrentImage();
+        }
+    }
+
+    private void RightButton_Click(object sender, RoutedEventArgs e)
+    {
+        if(_currentImageIndex < _imagePaths.Count - 1)
+        {
+            _currentImageIndex++;
+            LoadCurrentImage();
+        }
+    }
+    private void ProcessButton_Click(object sender, RoutedEventArgs e)
     {
         if (_loadedImage is null)
             return;
-        
+
         _loadedBitmap = _screenshots.BitmapFromBitmapImage(_loadedImage);
 
         var tooltip = _screenshots.DetectTooltip(_loadedBitmap);
