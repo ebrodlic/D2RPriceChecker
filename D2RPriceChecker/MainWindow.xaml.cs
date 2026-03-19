@@ -74,10 +74,18 @@ public partial class MainWindow : Window
             StartProcessing();
             ClearImageFields();
 
+            var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss-fff");
             var screenshot = _screenshots.CapturePrimaryScreen();
             var result = _detection.Run(screenshot);
          
             PopulateImageFields(result);
+            SavePipelineResultData(timestamp, result);
+
+            if (result.IsTooltipFound)
+            {
+                //var text = await ocrService.ReadAsync(tooltipImage);
+                //Dispatcher.Invoke(() => webView.ShowWithData(text));
+            }
         }
         finally
         {
@@ -86,19 +94,20 @@ public partial class MainWindow : Window
 
      
         //mb do timestamp here
-        // mb do is processing
-        //mb save the inner element
 
 
 
-        //if (result.IsTooltipFound)
-        //{
 
-            //var text = await ocrService.ReadAsync(tooltipImage);
-            //Dispatcher.Invoke(() => webView.ShowWithData(text));
-        //}
+
 
         // Save the captured screenshot and results for debugging to disk
+    }
+
+    private void SavePipelineResultData(string timestamp, TooltipPipelineResult result)
+    {
+        var datasetManager = ((App)Application.Current).DatasetManager;
+
+        datasetManager.Save(timestamp, result);
     }
 
     private void ClearImageFields()
