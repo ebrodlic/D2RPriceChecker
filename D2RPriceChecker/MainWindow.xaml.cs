@@ -146,6 +146,10 @@ public partial class MainWindow : Window
             {
                 TooltipImageControl.Source = _screenshots.BitmapImageFromBitmap(tooltip);
             }
+            else
+            {
+                TooltipImageControl.Source = null;
+            }
         }
         finally
         {
