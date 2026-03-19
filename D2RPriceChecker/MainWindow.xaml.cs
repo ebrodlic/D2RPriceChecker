@@ -1,4 +1,5 @@
 ﻿using D2RPriceChecker.Services;
+using D2RPriceChecker.Util;
 using Microsoft.Win32;
 using System.Drawing;
 using System.Windows;
@@ -18,7 +19,6 @@ public partial class MainWindow : Window
     // State
     private List<string> _imagePaths = new();
     private int _currentImageIndex = -1;
-    private BitmapImage? _loadedImage;
     private Bitmap? _loadedBitmap;
 
     // Variables for drag-to-scroll
@@ -29,6 +29,7 @@ public partial class MainWindow : Window
 
     // Services
     private readonly ScreenshotService _screenshots = new();
+    private readonly TooltipPipeline _detector = new(); //get rid of this?
     private HotkeyManager? _hotkeys;
 
     // Flags
@@ -160,9 +161,9 @@ public partial class MainWindow : Window
 
         ImagePathTextBox.Text = path;
 
-        _loadedImage = _screenshots.LoadScreenshotImage(path);
+        _loadedBitmap = _screenshots.LoadBitmapSafe(path);
 
-        Stage1Image.Source = _loadedImage;
+        Stage1Image.Source = BitmapConverter.BitmapImageFromBitmap(_loadedBitmap);
 
         if (AutoProcessCheckBox.IsChecked == true)
             ProcessButton_Click(this, null);
@@ -185,36 +186,33 @@ public partial class MainWindow : Window
             LoadCurrentImage();
         }
     }
+
     private async void ProcessButton_Click(object sender, RoutedEventArgs? e)
     {
-        if (_loadedImage is null || _isProcessing)
+        if (_loadedBitmap is null || _isProcessing)
             return;
 
         _isProcessing = true;
+
         try
         {
             LoadingSpinner.Visibility = Visibility.Visible;
 
-            _loadedBitmap = await Task.Run(() => _screenshots.BitmapFromBitmapImage(_loadedImage));
-
-            // Stage 1: Original screenshot (already shown in Stage1Image via LoadCurrentImage)
+            // Run the full pipeline once
+            var result = await Task.Run(() => _detector.Run(_loadedBitmap));
 
             // Stage 2: Border mask — white = gray-matching pixels, black = everything else
-            var mask = await Task.Run(() => _screenshots.DebugBorderMask(_loadedBitmap));
-            Stage2Image.Source = _screenshots.BitmapImageFromBitmap(mask);
+            Stage2Image.Source = BitmapConverter.BitmapImageFromBitmap(result.BorderMask);
 
             // Stage 3: Connected components — each blob gets a distinct color
-            var components = await Task.Run(() => _screenshots.DebugComponents(_loadedBitmap));
-            Stage3Image.Source = _screenshots.BitmapImageFromBitmap(components);
+            Stage3Image.Source = BitmapConverter.BitmapImageFromBitmap(result.Components);
 
             // Stage 4: Rectangular border detection — red rectangle overlay on original
-            var border = await Task.Run(() => _screenshots.DebugRectangularBorder(_loadedBitmap));
-            Stage4Image.Source = _screenshots.BitmapImageFromBitmap(border);
+            Stage4Image.Source = BitmapConverter.BitmapImageFromBitmap(result.BorderOverlay);
 
-            // Final result: full pipeline (trim + separator + crop)
-            var tooltip = await Task.Run(() => _screenshots.DetectTooltip(_loadedBitmap));
-            TooltipImageControl.Source = tooltip != null
-                ? _screenshots.BitmapImageFromBitmap(tooltip)
+            // Final result: cropped tooltip
+            TooltipImageControl.Source = result.Tooltip != null
+                ? BitmapConverter.BitmapImageFromBitmap(result.Tooltip)
                 : null;
         }
         finally
