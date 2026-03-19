@@ -65,6 +65,8 @@ namespace D2RPriceChecker.Services
             return tooltip;
         }
 
+        
+
         public Bitmap CapturePrimaryScreen()
         {
             int width = GetSystemMetrics(SM_CXSCREEN);
@@ -80,7 +82,7 @@ namespace D2RPriceChecker.Services
             return bitmap;
         }
 
-        internal BitmapImage LoadScreenshotImage(string path)
+        public BitmapImage LoadScreenshotImage(string path)
         {
             var img = new BitmapImage();        
             img.BeginInit();
@@ -93,6 +95,10 @@ namespace D2RPriceChecker.Services
 
 
 
+       
+
+
+
         public Bitmap BitmapFromBitmapImage(BitmapImage bitmapImage)
         {
             using (MemoryStream ms = new MemoryStream())
@@ -100,7 +106,17 @@ namespace D2RPriceChecker.Services
                 var encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(bitmapImage));
                 encoder.Save(ms);
-                return new Bitmap(ms);
+
+                // Create a stream-independent copy so the MemoryStream can be safely disposed.
+                // GDI+ requires the source stream to remain open for the Bitmap's lifetime,
+                // so we draw onto a new Bitmap to decouple it from the stream.
+                using var temp = new Bitmap(ms);
+                var result = new Bitmap(temp.Width, temp.Height, temp.PixelFormat);
+                using (var g = Graphics.FromImage(result))
+                {
+                    g.DrawImage(temp, 0, 0, temp.Width, temp.Height);
+                }
+                return result;
             }
         }
 
@@ -118,6 +134,112 @@ namespace D2RPriceChecker.Services
                 bitmapImage.Freeze();
                 return bitmapImage;
             }
+        }
+
+        public Bitmap DebugBorderMask(Bitmap img)
+        {
+            var mask = BuildBorderMask(img, TargetBorderColor, BorderTolerance);
+            return MaskToBitmap(mask);
+        }
+
+        public Bitmap DebugComponents(Bitmap img)
+        {
+            var width = img.Width;
+            var height = img.Height;
+
+            var mask = BuildBorderMask(img, TargetBorderColor, BorderTolerance);
+            var labels = new int[height, width];
+            var components = LabelConnectedComponents(mask, labels);
+
+            var result = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+            if (components.Count == 0)
+                return result;
+
+            // Assign a distinct color to each component
+            var rng = new Random(42);
+            var colors = new Dictionary<int, Color>();
+            foreach (var comp in components)
+            {
+                colors[comp.Id] = Color.FromArgb(rng.Next(80, 256), rng.Next(80, 256), rng.Next(80, 256));
+            }
+
+            for (var y = 0; y < height; y++)
+            {
+                for (var x = 0; x < width; x++)
+                {
+                    var id = labels[y, x];
+                    result.SetPixel(x, y, id != 0 ? colors[id] : Color.Black);
+                }
+            }
+
+            return result;
+        }
+
+        public Bitmap DebugRectangularBorder(Bitmap img)
+        {
+            var width = img.Width;
+            var height = img.Height;
+            var totalArea = width * height;
+
+            var mask = BuildBorderMask(img, TargetBorderColor, BorderTolerance);
+            var labels = new int[height, width];
+            var components = LabelConnectedComponents(mask, labels);
+
+            var result = (Bitmap)img.Clone();
+
+            if (components.Count == 0)
+                return result;
+
+            components.Sort((a, b) => b.Area.CompareTo(a.Area));
+
+            Component chosen = components[0];
+            foreach (var comp in components)
+            {
+                if (comp.Area / (double)totalArea <= 0.7)
+                {
+                    chosen = comp;
+                    break;
+                }
+            }
+
+            var borderRect = FindRectangularBorder(mask, labels, chosen.Id,
+                chosen.MinX, chosen.MinY, chosen.MaxX + 1, chosen.MaxY + 1);
+
+            if (!borderRect.HasValue)
+                return result;
+
+            // Draw the detected border rectangle in red
+            var red = Color.Red;
+            var box = borderRect.Value;
+            for (var x = box.X1; x < box.X2; x++)
+            {
+                result.SetPixel(x, Math.Max(box.Y1, 0), red);
+                result.SetPixel(x, Math.Min(box.Y2 - 1, height - 1), red);
+            }
+            for (var y = box.Y1; y < box.Y2; y++)
+            {
+                result.SetPixel(Math.Max(box.X1, 0), y, red);
+                result.SetPixel(Math.Min(box.X2 - 1, width - 1), y, red);
+            }
+
+            return result;
+        }
+
+        private static Bitmap MaskToBitmap(bool[,] mask)
+        {
+            var height = mask.GetLength(0);
+            var width = mask.GetLength(1);
+            var bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+
+            for (var y = 0; y < height; y++)
+            {
+                for (var x = 0; x < width; x++)
+                {
+                    bmp.SetPixel(x, y, mask[y, x] ? Color.White : Color.Black);
+                }
+            }
+
+            return bmp;
         }
 
         public Bitmap? DetectTooltip(Bitmap img)

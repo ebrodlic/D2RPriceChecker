@@ -5,43 +5,92 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:D2RPriceChecker"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1600">    
+        Title="MainWindow" Height="800" Width="1600" WindowState="Maximized">    
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5*" />    <!-- 60% -->
+            <ColumnDefinition Width="3*" />    <!-- 70% -->
             <ColumnDefinition Width="5" />     <!-- Separator -->
-            <ColumnDefinition Width="3*" />    <!-- 40% -->
+            <ColumnDefinition Width="1*" />    <!-- 30% -->
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Column="0" Margin="10">
-
 
             <!-- Label -->
             <TextBlock Text="Screenshot" FontWeight="Bold" Margin="0,0,0,5"/>
 
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10" Height="32">
                 <TextBlock Text="Image Path:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                <TextBox Name="ImagePathTextBox" Width="600" Margin="0,0,5,0"  />
+                <TextBox Name="ImagePathTextBox" Width="600" Margin="0,0,5,0" VerticalContentAlignment="Center"  />
                 <Button Content="Browse" Click="BrowseImages_Click" Width="80" Margin="0,0,5,0"/>
                 <Button Content="←" Click="LeftButton_Click" Width="30" Margin="0,0,5,0"/>
                 <Button Content="→" Click="RightButton_Click" Width="30" Margin="0,0,5,0"/>
                 <Button Content="Process" Click="ProcessButton_Click" Width="80" Margin="0,0,5,0"/>
+                <CheckBox x:Name="AutoProcessCheckBox" Content="Auto-process" VerticalAlignment="Center" Margin="5,0,0,0"/>
                 <Image x:Name="LoadingSpinner"
                         Width="32" Height="32"                   
                         Visibility="Collapsed"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center"/>
-                
+                        VerticalAlignment="Center"/>                
             </StackPanel>
 
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-            <!-- Screenshot image -->
-            <Border BorderBrush="Gray" BorderThickness="1">
-                <ScrollViewer>
-                    <Image Name="ScreenshotImageControl" Stretch="Uniform"/>
-                </ScrollViewer>
-            </Border>
+                <!-- Top Left -->
+                <Border Grid.Row="0" Grid.Column="0" BorderBrush="Gray" BorderThickness="1" Margin="5">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" 
+                                  VerticalScrollBarVisibility="Auto" 
+                                  Height="300"   
+                                  PreviewMouseLeftButtonDown="Scroll_MouseDown"
+                                  PreviewMouseMove="Scroll_MouseMove"
+                                  PreviewMouseLeftButtonUp="Scroll_MouseUp">
+                        
+                        <Image x:Name="Stage1Image" Stretch="None"/>
+                    </ScrollViewer>
+                </Border>
+                <!-- Top Right -->
+                <Border Grid.Row="0" Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Margin="5">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" 
+                                  VerticalScrollBarVisibility="Auto" 
+                                  Height="300"   
+                                  PreviewMouseLeftButtonDown="Scroll_MouseDown"
+                                  PreviewMouseMove="Scroll_MouseMove"
+                                  PreviewMouseLeftButtonUp="Scroll_MouseUp">
+                        <Image x:Name="Stage2Image" Stretch="None"/>
+                    </ScrollViewer>
+                </Border>
+                <!-- Bottom Left -->
+                <Border Grid.Row="1" Grid.Column="0" BorderBrush="Gray" BorderThickness="1" Margin="5">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" 
+                                  VerticalScrollBarVisibility="Auto" 
+                                  Height="300"   
+                                  PreviewMouseLeftButtonDown="Scroll_MouseDown"
+                                  PreviewMouseMove="Scroll_MouseMove"
+                                  PreviewMouseLeftButtonUp="Scroll_MouseUp">
+                        <Image x:Name="Stage3Image" Stretch="None"/>
+                    </ScrollViewer>
+                </Border>
+                <!-- Bottom Right -->
+                <Border Grid.Row="1" Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Margin="5">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" 
+                                  VerticalScrollBarVisibility="Auto" 
+                                  Height="300"   
+                                  PreviewMouseLeftButtonDown="Scroll_MouseDown"
+                                  PreviewMouseMove="Scroll_MouseMove"
+                                  PreviewMouseLeftButtonUp="Scroll_MouseUp">
+                        <Image x:Name="Stage4Image" Stretch="None"/>
+                    </ScrollViewer>
+                </Border>
+
+            </Grid>
         </StackPanel>
 
         <!-- Separator -->
@@ -61,7 +110,14 @@
             <StackPanel Grid.Row="0">
                 <TextBlock Text="Tooltip" FontWeight="Bold" Margin="0,0,0,5"/>
                 <!--<Border BorderBrush="Gray" BorderThickness="1">-->
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" 
+                              VerticalScrollBarVisibility="Auto" 
+                              Height="300"   
+                              PreviewMouseLeftButtonDown="Scroll_MouseDown"
+                              PreviewMouseMove="Scroll_MouseMove"
+                              PreviewMouseLeftButtonUp="Scroll_MouseUp">
                     <Image Name="TooltipImageControl" Stretch="None"/>
+                </ScrollViewer>
                 <!--</Border>-->
             </StackPanel>
 
