@@ -13,75 +13,88 @@ public class TooltipPipeline
     /// </summary>
     public TooltipPipelineResult Run(Bitmap screenshot)
     {
-        var result = new TooltipPipelineResult(screenshot);
-
-        var width = screenshot.Width;
-        var height = screenshot.Height;
-        var totalArea = width * height;
+        var totalArea = screenshot.Width * screenshot.Height;
+        var labels = new int[screenshot.Height, screenshot.Width];
 
         var mask = CreateBorderMask(screenshot, TargetBorderColor, BorderTolerance);
-        var labels = new int[height, width];
         var components = LabelConnectedComponents(mask, labels);
+        var borderRect = FindBestBorder(components, mask, labels, totalArea);
 
-        result.BorderMask = RenderBorderMask(mask);
-        result.Components = RenderComponents(labels, components);
-
-        InnerBox? borderRect = null;
-
-        if (components.Count > 0)
+        return new TooltipPipelineResult(screenshot)
         {
-            components.Sort((a, b) => b.Area.CompareTo(a.Area));
+            BorderMask = RenderBorderMask(mask),
+            Components = RenderComponents(labels, components),
+            BorderOverlay = RenderBorderOverlay(screenshot, borderRect),
+            Tooltip = CropTooltip(screenshot, mask, borderRect, totalArea)
+        };
+    }
 
-            var chosen = components[0];
-            foreach (var comp in components)
+    #region Pipeline steps
+
+    private static InnerBox? FindBestBorder(List<Component> components, bool[,] mask, int[,] labels, int totalArea)
+    {
+        if (components.Count == 0)
+            return null;
+
+        InnerBox? best = null;
+        var bestArea = 0;
+
+        foreach (var comp in components)
+        {
+            if (comp.Area / (double)totalArea > 0.7)
+                continue;
+
+            var rect = FindRectangularBorder(mask, labels, comp.Id,
+                comp.MinX, comp.MinY, comp.MaxX + 1, comp.MaxY + 1);
+
+            if (!rect.HasValue)
+                continue;
+
+            var area = (rect.Value.X2 - rect.Value.X1) * (rect.Value.Y2 - rect.Value.Y1);
+            if (area > bestArea)
             {
-                if (comp.Area / (double)totalArea <= 0.7)
-                {
-                    chosen = comp;
-                    break;
-                }
-            }
-
-            borderRect = FindRectangularBorder(mask, labels, chosen.Id,
-                chosen.MinX, chosen.MinY, chosen.MaxX + 1, chosen.MaxY + 1);
-
-            if (borderRect.HasValue)
-            {
-                var x1 = borderRect.Value.X1;
-                var y1 = borderRect.Value.Y1;
-                var x2 = borderRect.Value.X2;
-                var y2 = borderRect.Value.Y2;
-
-                var rectRatio = (x2 - x1) * (y2 - y1) / (double)totalArea;
-
-                if (rectRatio <= 0.7)
-                {
-                    const int trimWidth = 2;
-                    x1 += trimWidth;
-                    y1 += trimWidth;
-                    x2 -= trimWidth;
-                    y2 -= trimWidth;
-
-                    if (x2 > x1 && y2 > y1)
-                    {
-                        var separator = FindHorizontalSeparator(mask, x1, y1, x2, y2);
-                        if (separator.HasValue)
-                            y2 = separator.Value;
-
-                        if (x2 > x1 && y2 > y1)
-                        {
-                            var cropRect = Rectangle.FromLTRB(x1, y1, x2, y2);
-                            result.Tooltip = screenshot.Clone(cropRect, screenshot.PixelFormat);
-                        }
-                    }
-                }
+                best = rect;
+                bestArea = area;
             }
         }
 
-        result.BorderOverlay = RenderBorderOverlay(screenshot, borderRect);
-
-        return result;
+        return best;
     }
+
+    private static Bitmap? CropTooltip(Bitmap screenshot, bool[,] mask,
+        InnerBox? borderRect, int totalArea)
+    {
+        if (!borderRect.HasValue)
+            return null;
+
+        var x1 = borderRect.Value.X1;
+        var y1 = borderRect.Value.Y1;
+        var x2 = borderRect.Value.X2;
+        var y2 = borderRect.Value.Y2;
+
+        if ((x2 - x1) * (y2 - y1) / (double)totalArea > 0.7)
+            return null;
+
+        const int trimWidth = 2;
+        x1 += trimWidth;
+        y1 += trimWidth;
+        x2 -= trimWidth;
+        y2 -= trimWidth;
+
+        if (x2 <= x1 || y2 <= y1)
+            return null;
+
+        var separator = FindHorizontalSeparator(mask, x1, y1, x2, y2);
+        if (separator.HasValue)
+            y2 = separator.Value;
+
+        if (x2 <= x1 || y2 <= y1)
+            return null;
+
+        return screenshot.Clone(Rectangle.FromLTRB(x1, y1, x2, y2), screenshot.PixelFormat);
+    }
+
+    #endregion
 
     #region Rendering
 

@@ -29,7 +29,7 @@ public partial class MainWindow : Window
 
     // Services
     private readonly ScreenshotService _screenshots = new();
-    private readonly TooltipPipeline _detector = new(); //get rid of this?
+    private readonly TooltipPipeline _detection = new(); //get rid of this?
     private HotkeyManager? _hotkeys;
 
     // Flags
@@ -47,7 +47,6 @@ public partial class MainWindow : Window
         var spinnerImage = new BitmapImage(spinnerUri);
         ImageBehavior.SetAnimatedSource(LoadingSpinner, spinnerImage);
     }
-   
 
     protected override void OnSourceInitialized(EventArgs e)
     {
@@ -199,7 +198,7 @@ public partial class MainWindow : Window
             LoadingSpinner.Visibility = Visibility.Visible;
 
             // Run the full pipeline once
-            var result = await Task.Run(() => _detector.Run(_loadedBitmap));
+            var result = await Task.Run(() => _detection.Run(_loadedBitmap));
 
             // Stage 2: Border mask — white = gray-matching pixels, black = everything else
             Stage2Image.Source = BitmapConverter.BitmapImageFromBitmap(result.BorderMask);
