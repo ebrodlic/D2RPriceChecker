@@ -170,7 +170,7 @@ public partial class MainWindow : Window
 
     private void LeftButton_Click(object sender, RoutedEventArgs? e)
     {
-        if(_currentImageIndex > 0)
+        if(_currentImageIndex > 0 && !_isProcessing)
         {
             _currentImageIndex--;
             LoadCurrentImage();
@@ -179,7 +179,7 @@ public partial class MainWindow : Window
 
     private void RightButton_Click(object sender, RoutedEventArgs? e)
     {
-        if(_currentImageIndex < _imagePaths.Count - 1)
+        if(_currentImageIndex < _imagePaths.Count - 1 && !_isProcessing)
         {
             _currentImageIndex++;
             LoadCurrentImage();
