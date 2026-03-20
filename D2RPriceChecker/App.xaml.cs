@@ -10,12 +10,10 @@ namespace D2RPriceChecker;
 /// </summary>
 public partial class App : Application
 {
-    public DatasetManager DatasetManager { get; private set; }
+    public DatasetManager DatasetManager { get; private set; } = new DatasetManager();
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
-
-        DatasetManager = new DatasetManager();
     }
 }
 
