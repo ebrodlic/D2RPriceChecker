@@ -1,4 +1,5 @@
-﻿using D2RPriceChecker.Services;
+﻿using D2RPriceChecker.Pipelines;
+using D2RPriceChecker.Services;
 using D2RPriceChecker.Util;
 using Microsoft.Win32;
 using System.Drawing;
@@ -29,7 +30,8 @@ public partial class MainWindow : Window
 
     // Services
     private readonly ScreenshotService _screenshots = new();
-    private readonly TooltipPipeline _detection = new(); //get rid of this?
+    private readonly TooltipDetectionPipeline _detection = new(); //get rid of this?
+    private readonly TooltipLineSegmentationPipeline _segmentation = new(); //this too?
     private HotkeyManager? _hotkeys;
 
     // Flags
@@ -76,13 +78,19 @@ public partial class MainWindow : Window
 
             var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss-fff");
             var screenshot = _screenshots.CapturePrimaryScreen();
-            var result = _detection.Run(screenshot);
+            var detectionResult = _detection.Run(screenshot);
          
-            PopulateImageFields(result);
-            SavePipelineResultData(timestamp, result);
+            PopulateImageFields(detectionResult);
+            SavePipelineResultData(timestamp, detectionResult);
 
-            if (result.IsTooltipFound)
+            if (detectionResult.IsTooltipFound)
             {
+                var segmentationResult = _segmentation.Run(detectionResult.Tooltip);
+
+                DebugLogTextBox.Text = segmentationResult.TooltipLines.Count.ToString();
+
+                PopulateSegmentationImageFields(segmentationResult);
+
                 //var text = await ocrService.ReadAsync(tooltipImage);
                 //Dispatcher.Invoke(() => webView.ShowWithData(text));
             }
@@ -99,7 +107,25 @@ public partial class MainWindow : Window
         // Save the captured screenshot and results for debugging to disk
     }
 
-    private void SavePipelineResultData(string timestamp, TooltipPipelineResult result)
+    private void PopulateSegmentationImageFields(TooltipLineSegmetnationPipelineResult segmentationResult)
+    {
+        LinesStackPanel.Children.Clear();
+
+        foreach (var bitmap in segmentationResult.TooltipLines)
+        {
+            var lineImage = BitmapConverter.BitmapImageFromBitmap(bitmap);
+
+            System.Windows.Controls.Image img = new System.Windows.Controls.Image
+            {
+                Source = lineImage,
+                Margin = new Thickness(5),
+            };
+
+            LinesStackPanel.Children.Add(img);
+        }
+    }
+
+    private void SavePipelineResultData(string timestamp, TooltipDetectionPipelineResult result)
     {
         var datasetManager = ((App)Application.Current).DatasetManager;
 
@@ -118,7 +144,7 @@ public partial class MainWindow : Window
         TooltipImageControl.Source = null;
     }   
 
-    private void PopulateImageFields(TooltipPipelineResult result, bool includeScreenshotField = true)
+    private void PopulateImageFields(TooltipDetectionPipelineResult result, bool includeScreenshotField = true)
     {
         if (Application.Current.MainWindow?.IsVisible == false)
             return;
@@ -177,7 +203,7 @@ public partial class MainWindow : Window
             _imagePaths = dialog.FileNames.ToList();
             _currentImageIndex = 0;
 
-            LoadCurrentImage();          
+            LoadCurrentImage();
         }
     }
 
@@ -264,9 +290,15 @@ public partial class MainWindow : Window
             StartProcessing();
 
             // Run the full pipeline once
-            var result = await Task.Run(() => _detection.Run(_loadedBitmap));
+            var detectionResult = await Task.Run(() => _detection.Run(_loadedBitmap));
 
-            PopulateImageFields(result);
+            PopulateImageFields(detectionResult);
+
+            var segmentationResult = _segmentation.Run(detectionResult.Tooltip);
+
+            DebugLogTextBox.Text = segmentationResult.TooltipLines.Count.ToString();
+
+            PopulateSegmentationImageFields(segmentationResult);
         }
         finally
         {

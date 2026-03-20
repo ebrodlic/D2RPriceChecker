@@ -1,4 +1,5 @@
-﻿using System;
+﻿using D2RPriceChecker.Pipelines;
+using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
@@ -24,7 +25,7 @@ namespace D2RPriceChecker.Services
             Directory.CreateDirectory(Path.Combine(_basePath, _masksDirName));
         }
 
-        public void Save(string id, TooltipPipelineResult result)
+        public void Save(string id, TooltipDetectionPipelineResult result)
         {
             var screenshotPath = Path.Combine(_basePath, _screenshotsDirName, $"{id}.png");
             var tooltipPath = Path.Combine(_basePath, _tooltipsDirName, $"{id}.png");

@@ -1,9 +1,9 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace D2RPriceChecker.Services;
+namespace D2RPriceChecker.Pipelines;
 
-public class TooltipPipeline
+public class TooltipDetectionPipeline
 {
     private static readonly Color TargetBorderColor = Color.FromArgb(65, 65, 64);
     private const int BorderTolerance = 8;
@@ -11,7 +11,7 @@ public class TooltipPipeline
     /// <summary>
     /// Processes a screenshot and returns all pipeline results as pre-rendered bitmaps.
     /// </summary>
-    public TooltipPipelineResult Run(Bitmap screenshot)
+    public TooltipDetectionPipelineResult Run(Bitmap screenshot)
     {
         var totalArea = screenshot.Width * screenshot.Height;
         var labels = new int[screenshot.Height, screenshot.Width];
@@ -20,7 +20,7 @@ public class TooltipPipeline
         var components = LabelConnectedComponents(mask, labels);
         var borderRect = FindBestBorder(components, mask, labels, totalArea);
 
-        return new TooltipPipelineResult(screenshot)
+        return new TooltipDetectionPipelineResult(screenshot)
         {
             BorderMask = RenderBorderMask(mask),
             Components = RenderComponents(labels, components),

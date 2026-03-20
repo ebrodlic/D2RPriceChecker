@@ -101,9 +101,10 @@
                 <StackPanel Grid.Column="0" Orientation="Vertical">
                     <TextBlock Text="Tooltip" FontWeight="Bold" Margin="0,0,0,5"/>
 
-                    <ScrollViewer Style="{StaticResource TooltipScrollViewerStyle}" PreviewMouseLeftButtonDown="Scroll_MouseDown"
-                         PreviewMouseMove="Scroll_MouseMove"
-                         PreviewMouseLeftButtonUp="Scroll_MouseUp">
+                    <ScrollViewer Style="{StaticResource TooltipScrollViewerStyle}" 
+                                  PreviewMouseLeftButtonDown="Scroll_MouseDown"
+                                  PreviewMouseMove="Scroll_MouseMove"
+                                  PreviewMouseLeftButtonUp="Scroll_MouseUp"> 
                         <Image Name="TooltipImageControl" Stretch="None"/>
                     </ScrollViewer>
                 </StackPanel>
@@ -115,14 +116,16 @@
                         HorizontalAlignment="Center" />
 
                 <!-- Right side: Lines section-->
-                <StackPanel Grid.Column="2" Orientation="Vertical">
+                <StackPanel  Grid.Column="2" Orientation="Vertical">
                     <TextBlock Text="Lines" FontWeight="Bold" Margin="0,0,0,5"/>
-
-                    <ScrollViewer PreviewMouseLeftButtonDown="Scroll_MouseDown"
+                    <ScrollViewer Style="{StaticResource TooltipScrollViewerStyle}" 
+                                  PreviewMouseLeftButtonDown="Scroll_MouseDown"
                                   PreviewMouseMove="Scroll_MouseMove"
                                   PreviewMouseLeftButtonUp="Scroll_MouseUp">
-                        <Image Name="LinesImageControl" Stretch="None"/>
+                        <StackPanel Name="LinesStackPanel" Orientation="Vertical"/>
                     </ScrollViewer>
+                    
+                 
                 </StackPanel>
 
             </Grid>

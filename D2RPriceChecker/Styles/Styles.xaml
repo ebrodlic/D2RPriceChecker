@@ -1,0 +1,19 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  
+  <!--ScrollViewer style-->
+  <Style x:Key="StageScrollViewerStyle" TargetType="ScrollViewer">
+    <Setter Property="MinHeight" Value="200"/>
+    <Setter Property="MaxHeight" Value="200"/>
+    <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
+    <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+  </Style>
+
+  <Style x:Key="TooltipScrollViewerStyle" TargetType="ScrollViewer">
+    <Setter Property="MinHeight" Value="500"/>
+    <Setter Property="MaxHeight" Value="500"/>
+    <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
+    <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+  </Style>
+</ResourceDictionary>
+

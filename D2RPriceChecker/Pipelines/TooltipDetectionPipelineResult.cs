@@ -1,8 +1,8 @@
 using System.Drawing;
 
-namespace D2RPriceChecker.Services;
+namespace D2RPriceChecker.Pipelines;
 
-public class TooltipPipelineResult
+public class TooltipDetectionPipelineResult
 {
     public Bitmap Screenshot { get; set; }
     public Bitmap? BorderMask { get; set; }
@@ -12,7 +12,7 @@ public class TooltipPipelineResult
 
     public bool IsTooltipFound => Tooltip != null;
 
-    public TooltipPipelineResult(Bitmap screenshot)
+    public TooltipDetectionPipelineResult(Bitmap screenshot)
     {
         Screenshot = screenshot;
     }
