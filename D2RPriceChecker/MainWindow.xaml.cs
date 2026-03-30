@@ -5,11 +5,13 @@ using Microsoft.Win32;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using WpfAnimatedGif;
 
 namespace D2RPriceChecker;
@@ -93,6 +95,21 @@ public partial class MainWindow : Window
 
                 PopulateSegmentationImageFields(segmentationResult);
                 SavePipelineResultData(timestamp, segmentationResult);
+
+                // Clear previous OCR results
+                OcrResultTextBox.Text = string.Empty;
+
+                var text = await Task.Run(() => new OcrService("Models/d2r_tooltip_crnn_best.onnx").PredictTextBatch(segmentationResult.TooltipLines));
+
+                foreach (var line in text)
+                {
+                    OcrResultTextBox.Text += line + "\n";
+                }
+
+                //foreach (var val in text)
+                //{
+                //    OcrResultTextBox.Text += val;
+                //}
 
                 //var text = await ocrService.ReadAsync(tooltipImage);
                 //Dispatcher.Invoke(() => webView.ShowWithData(text));

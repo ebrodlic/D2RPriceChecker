@@ -9,10 +9,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Models\d2r_tooltip_crnn_best.onnx" />
     <None Remove="Resources\spinner.gif" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Models\d2r_tooltip_crnn_best.onnx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.24.4" />
+    <PackageReference Include="System.Numerics.Tensors" Version="10.0.5" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
   </ItemGroup>
 
