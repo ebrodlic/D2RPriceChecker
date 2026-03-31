@@ -150,13 +150,13 @@ public partial class MainWindow : Window
 
     private void SavePipelineResultData(string timestamp, TooltipDetectionPipelineResult result)
     {
-        var datasetManager = ((App)Application.Current).DatasetManager;
+        var datasetManager = ((App)Application.Current).Cache;
 
         datasetManager.Save(timestamp, result);
     }
     private void SavePipelineResultData(string timestamp, TooltipLineSegmetnationPipelineResult result)
     {
-        var datasetManager = ((App)Application.Current).DatasetManager;
+        var datasetManager = ((App)Application.Current).Cache;
 
         datasetManager.Save(timestamp, result);
     }
@@ -336,6 +336,7 @@ public partial class MainWindow : Window
 
         try
         {
+
             StartProcessing();
 
             //var timestamp = Path.GetFileNameWithoutExtension(_currentImagePath);
@@ -352,6 +353,16 @@ public partial class MainWindow : Window
 
             PopulateSegmentationImageFields(segmentationResult);
             //SavePipelineResultData(timestamp, segmentationResult);
+
+            // Clear previous OCR results
+            OcrResultTextBox.Text = string.Empty;
+
+            var text = await Task.Run(() => new OcrService("Models/d2r_tooltip_crnn_best.onnx").PredictTextBatch(segmentationResult.TooltipLines));
+
+            foreach (var line in text)
+            {
+                OcrResultTextBox.Text += line + "\n";
+            }
         }
         finally
         {
