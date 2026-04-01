@@ -11,11 +11,13 @@ namespace D2RPriceChecker.Windows
 {
     public partial class SplashWindow : Window
     {
+
         private NotifyIcon _trayIcon = null!;
-        private HotkeyManager _hotkeys = null!;
-
         private OverlayWindow _overlay = null!;
+        private TraderieWindow _traderie = null!;
 
+        private HotkeyManager _hotkeys = null!;
+      
         // Services
         private readonly ScreenshotService _screenshots = new();
         private readonly OcrService _ocrService = new OcrService("Models/d2r_tooltip_crnn_best.onnx");
@@ -28,7 +30,12 @@ namespace D2RPriceChecker.Windows
             InitializeComponent();
             SetupTray();
             SetupOverlay();
+            SetupTraderie();
+        }
 
+        private void SetupTraderie()
+        {
+            _traderie = new TraderieWindow();
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -56,6 +63,7 @@ namespace D2RPriceChecker.Windows
 
             var menu = new ContextMenuStrip();
             menu.Items.Add("Open", null, (s, e) => { this.Show(); });
+            menu.Items.Add("Log In", null, (s, e) => { _traderie.Show(); });
             menu.Items.Add("Exit", null, (s, e) => { System.Windows.Application.Current.Shutdown(); });
             _trayIcon.ContextMenuStrip = menu;
 
