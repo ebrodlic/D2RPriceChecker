@@ -64,7 +64,10 @@ public partial class DebugWindow : Window
         _hotkeys = new HotkeyManager(handle);  
 
         _hotkeys.Register(Key.D, ModifierKeys.Control, HandlePipelineHotkey);
+        _hotkeys.Register(Key.O, ModifierKeys.Control, HandleOverlayToggleHotkey);
     }
+
+
 
     protected override void OnClosed(EventArgs e)
     {
@@ -127,6 +130,11 @@ public partial class DebugWindow : Window
         // Save the captured screenshot and results for debugging to disk
     }
 
+    private void HandleOverlayToggleHotkey()
+    {
+        throw new NotImplementedException();
+    }
+
     private void PopulateSegmentationImageFields(TooltipLineSegmetnationPipelineResult segmentationResult)
     {
         if (Application.Current.MainWindow?.IsVisible == false)
@@ -160,7 +168,6 @@ public partial class DebugWindow : Window
 
         datasetManager.Save(timestamp, result);
     }
-
     private void ClearImageFields()
     {
         if (Application.Current.MainWindow?.IsVisible == false)
@@ -171,7 +178,7 @@ public partial class DebugWindow : Window
         Stage3Image.Source = null;
         Stage4Image.Source = null;
         TooltipImageControl.Source = null;
-    }   
+    }
 
     private void PopulateImageFields(TooltipDetectionPipelineResult result, bool includeScreenshotField = true)
     {
@@ -228,7 +235,6 @@ public partial class DebugWindow : Window
                 Overlay.Visibility = Visibility.Visible;
             }
         }
-
     }
 
     private void Overlay_Close(object sender, MouseButtonEventArgs e)

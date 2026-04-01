@@ -33,8 +33,11 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        if(MainWindow is SplashWindow)
+            ((SplashWindow)MainWindow).Cleanup();
+
         base.OnExit(e);
-        LoggingService.Info("Application exited");
+        //LoggingService.Info("Application exited");
     }
 }
 

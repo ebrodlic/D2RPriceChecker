@@ -14,6 +14,8 @@ namespace D2RPriceChecker.Windows
         private NotifyIcon _trayIcon = null!;
         private HotkeyManager _hotkeys = null!;
 
+        private OverlayWindow _overlay = null!;
+
         // Services
         private readonly ScreenshotService _screenshots = new();
         private readonly OcrService _ocrService = new OcrService("Models/d2r_tooltip_crnn_best.onnx");
@@ -24,7 +26,9 @@ namespace D2RPriceChecker.Windows
         public SplashWindow()
         {
             InitializeComponent();
-            SetupTray(); 
+            SetupTray();
+            SetupOverlay();
+
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -40,6 +44,7 @@ namespace D2RPriceChecker.Windows
             _hotkeys = new HotkeyManager(handle);
 
             _hotkeys.Register(Key.D, ModifierKeys.Control, HandlePipelineHotkey);
+            _hotkeys.Register(Key.O, ModifierKeys.Control, HandleOverlayToggleHotkey);
         }
 
         private void SetupTray()
@@ -55,6 +60,19 @@ namespace D2RPriceChecker.Windows
             _trayIcon.ContextMenuStrip = menu;
 
             _trayIcon.DoubleClick += (s, e) => { this.Show(); };
+        }
+
+        private void SetupOverlay()
+        {
+            _overlay = new OverlayWindow();
+           
+            _overlay.Visibility = Visibility.Hidden;
+            _overlay.ShowInTaskbar = false;
+
+            //_overlay.Show();
+            //_overlay.Owner = this;
+            //_overlay.Hide();
+
         }
 
         private async void HandlePipelineHotkey()
@@ -77,6 +95,8 @@ namespace D2RPriceChecker.Windows
 
                 var ocrText = await RunOcrPipelineAsync(segmentationResult);
              
+
+                // Replace this with handling of an event, pipeline done
                 System.Windows.MessageBox.Show(
                     string.Join("\n", ocrText),
                     "D2R OCR",
@@ -89,6 +109,29 @@ namespace D2RPriceChecker.Windows
             { 
                 StopProcessing();
             }
+        }
+
+        private void ToggleOverlay()
+        {
+            if (_overlay.IsVisible)
+            {
+                _overlay.Hide();
+            }
+            else
+            {
+                if (_overlay.Owner == null)
+                    _overlay.Owner = this;
+
+                _overlay.WindowState = WindowState.Normal;
+                _overlay.Topmost = true;
+
+                _overlay.Show();
+            }
+          
+        }
+        private void HandleOverlayToggleHotkey()
+        {
+            ToggleOverlay();
         }
 
         private async Task<List<string>> RunOcrPipelineAsync(TooltipLineSegmetnationPipelineResult segmentationResult)
@@ -114,7 +157,6 @@ namespace D2RPriceChecker.Windows
 
             return segmentationResult;
         }
-
 
         private void StartProcessing()
         {
@@ -162,6 +204,12 @@ namespace D2RPriceChecker.Windows
             {
                 //_trayIcon.ShowBalloonTip(1000, "D2R Price Checker", "Application minimized to tray", ToolTipIcon.Info);
             }
+        }
+
+        public void Cleanup()
+        {
+            _trayIcon?.Dispose();
+            _overlay?.Close();
         }
 
         private void MinimizeToTray()
