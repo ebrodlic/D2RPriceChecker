@@ -47,7 +47,14 @@ namespace D2RPriceChecker.Windows
             if (IsClickInsideContent(e))
                 return;
 
+            ClearFields();
             HideOverlay();
+        }
+
+        private void ClearFields()
+        {
+            OcrText.Text = string.Empty;
+            PriceText.Text = string.Empty;
         }
 
         private bool IsClickInsideContent(MouseButtonEventArgs e)
@@ -68,6 +75,16 @@ namespace D2RPriceChecker.Windows
         {
             OcrText.Text = text;
 
+            Visibility = Visibility.Visible;
+            Activate(); // bring on top of game
+        }
+
+
+        // TODO - not sure about this for now
+        public void DisplayPrices(List<string> prices)
+        {
+            PriceText.Text = string.Join("\n", prices);
+        
             Visibility = Visibility.Visible;
             Activate(); // bring on top of game
         }
