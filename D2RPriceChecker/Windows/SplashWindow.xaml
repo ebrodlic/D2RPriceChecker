@@ -11,6 +11,10 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen">
     <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown" Background="Transparent">
+
+        <Button Content="_" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,35,0" Width="24" Height="24"
+            Background="Transparent" BorderThickness="0" FontWeight="Bold" FontSize="14" Cursor="Hand"
+            Click="MinimizeButton_Click"/>
         <Button Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,5,0" Width="24" Height="24" 
                 Background="Transparent" BorderThickness="0" FontWeight="Bold" FontSize="14" Cursor="Hand"
                 Click="CloseButton_Click"/>

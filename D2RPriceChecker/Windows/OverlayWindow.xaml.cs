@@ -21,26 +21,24 @@ namespace D2RPriceChecker.Windows
         {
             InitializeComponent();
 
-            WindowStyle = WindowStyle.None;
-            ResizeMode = ResizeMode.NoResize;
-            AllowsTransparency = true;
-            Background = new SolidColorBrush(Color.FromArgb(128, 0, 0, 0));
-            Topmost = true;
-
-            Loaded += (s, e) =>
-            {
-                Left = 0;
-                Top = 0;
-                Width = SystemParameters.PrimaryScreenWidth;
-                Height = SystemParameters.PrimaryScreenHeight;
-                IsHitTestVisible = true; // click-through background initially
-            };
+            // Set full screen on load
+            Loaded += OnWindowLoaded;
 
             // Click anywhere on overlay window
             Root.MouseDown += OnBackgroundClicked;
 
             // Content panel stops click bubbling
             ContentPanel.MouseDown += (s, e) => e.Handled = true;
+        }
+
+        private void OnWindowLoaded(object sender, RoutedEventArgs e)
+        {
+            Left = 0;
+            Top = 0;
+            Width = SystemParameters.PrimaryScreenWidth;
+            Height = SystemParameters.PrimaryScreenHeight;
+
+            IsHitTestVisible = true; // click-through background initially
         }
 
         private void OnBackgroundClicked(object sender, MouseButtonEventArgs e)
@@ -66,7 +64,7 @@ namespace D2RPriceChecker.Windows
 
             return false;
         }
-        public void ShowResult(string text)
+        public void DisplayText(string text)
         {
             OcrText.Text = text;
 

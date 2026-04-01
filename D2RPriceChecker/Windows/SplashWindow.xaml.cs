@@ -94,16 +94,8 @@ namespace D2RPriceChecker.Windows
                 SavePipelineResultData(timestamp, segmentationResult);
 
                 var ocrText = await RunOcrPipelineAsync(segmentationResult);
-             
 
-                // Replace this with handling of an event, pipeline done
-                System.Windows.MessageBox.Show(
-                    string.Join("\n", ocrText),
-                    "D2R OCR",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information
-                );
-                
+                _overlay.DisplayText(string.Join("\n", ocrText));
             }
             finally
             { 
@@ -194,9 +186,9 @@ namespace D2RPriceChecker.Windows
                 this.DragMove();
         }
 
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
         {
-            // Instead of closing the window, just hide it
+            // Instead of closing the window, just hide it, sends to tray
             this.Hide();
 
             // Optional: show balloon tip from tray
@@ -204,6 +196,11 @@ namespace D2RPriceChecker.Windows
             {
                 //_trayIcon.ShowBalloonTip(1000, "D2R Price Checker", "Application minimized to tray", ToolTipIcon.Info);
             }
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Application.Current.Shutdown(); // ensures full exit
         }
 
         public void Cleanup()
