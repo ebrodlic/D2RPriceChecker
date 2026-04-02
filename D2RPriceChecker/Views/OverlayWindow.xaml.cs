@@ -118,6 +118,8 @@ namespace D2RPriceChecker.Windows
             // Bring to front of game
             Topmost = true;
             Activate();
+
+            TradesScrollViewer.ScrollToTop();
         }
         public void HideOverlay()
         {

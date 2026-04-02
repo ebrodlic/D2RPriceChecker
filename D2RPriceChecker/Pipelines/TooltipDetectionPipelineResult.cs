@@ -10,7 +10,16 @@ public class TooltipDetectionPipelineResult
     public Bitmap? BorderOverlay { get; set; }
     public Bitmap? Tooltip { get; set; }
 
-    public bool IsTooltipFound => Tooltip != null;
+    public bool IsTooltipFound()
+    {
+        if (Tooltip is null)
+            return false;
+
+        if (Tooltip.Width < 300)
+            return false;
+
+        return true;
+    }
 
     public TooltipDetectionPipelineResult(Bitmap screenshot)
     {

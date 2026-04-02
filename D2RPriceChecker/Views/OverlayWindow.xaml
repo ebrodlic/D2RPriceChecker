@@ -17,9 +17,9 @@
         <!-- Centered content -->
         <Border
             x:Name="ContentPanel"
-            Width="400"
+            Width="500"
             Padding="20"
-            Background="#FF1E1E1E"
+            Background="#131415"
             CornerRadius="8"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
@@ -30,20 +30,29 @@
                 <ItemsControl ItemsSource="{Binding OcrLines}" DockPanel.Dock="Top">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding}" Foreground="White" FontSize="14" Margin="0,0,0,2"/>
+                            <TextBlock Text="{Binding}" Foreground="White" FontSize="12" Margin="0,0,0,2"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
                 <Separator DockPanel.Dock="Top" Margin="0,5" />
 
+                <StackPanel Orientation="Vertical" DockPanel.Dock="Top" Margin="0,0,0,5">
+                    <TextBlock Text="Min Price" Foreground="LightGreen" FontSize="16" FontWeight="Bold"/>
+                    <TextBlock Text="Max Price" Foreground="LightGreen" FontSize="16" FontWeight="Bold"/>
+                    <TextBlock Text="Estimate Price" Foreground="LightGreen" FontSize="16" FontWeight="Bold"/>
+                    <TextBlock Text="HR Value" Foreground="LightGreen" FontSize="16" FontWeight="Bold"/>
+                </StackPanel>
+
+                <Separator DockPanel.Dock="Top" Margin="0,5" />
+
                 <!-- Bottom: Trades -->
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ScrollViewer x:Name="TradesScrollViewer" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden">
                     <ItemsControl ItemsSource="{Binding Trades}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Border BorderThickness="1" BorderBrush="Gray" Margin="0,2" Padding="4">
-                                    <StackPanel>
+                                    <StackPanel Background="#202224">
                                         <TextBlock Text="Trade:" FontWeight="Bold" Foreground="White"/>
                                         <ItemsControl ItemsSource="{Binding Prices}">
                                             <ItemsControl.ItemTemplate>

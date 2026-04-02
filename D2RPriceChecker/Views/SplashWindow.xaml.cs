@@ -179,7 +179,7 @@ namespace D2RPriceChecker.Windows
                 var detectionResult = RunDetectionPipeline(timestamp);
                 SavePipelineResultData(timestamp, detectionResult);
 
-                if(!detectionResult.IsTooltipFound)
+                if(!detectionResult.IsTooltipFound())
                     return;
 
                 //TODO - fix this - no need for new settings object here at all
@@ -189,7 +189,8 @@ namespace D2RPriceChecker.Windows
                 var itemMetadata = new ItemDetectionPipeline().Run(segmentationResult.TooltipLines[0]);
                 var itemText = await RunOcrPipelineAsync(segmentationResult);
 
-                _overlay.Show();
+                //_overlay.Show();
+                _overlay.ShowOverlay();
                 _overlay.UpdateValues(itemText);
 
                 //TODO - not a fan of traderie window being called to do compute stuff

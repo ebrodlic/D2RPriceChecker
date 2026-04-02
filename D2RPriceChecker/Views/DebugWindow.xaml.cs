@@ -89,7 +89,7 @@ public partial class DebugWindow : Window
             PopulateImageFields(detectionResult);
             SavePipelineResultData(timestamp, detectionResult);
 
-            if (detectionResult.IsTooltipFound)
+            if (detectionResult.IsTooltipFound())
             {
                 //TODO - fix this - no need for new settings object here at all
                 var segmentationResult = _segmentation.Run(detectionResult.Tooltip, new TooltipLineSegmentationPipelineSettings());
