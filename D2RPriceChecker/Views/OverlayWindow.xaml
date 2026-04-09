@@ -18,14 +18,15 @@
         <Border
             x:Name="ContentPanel"
             Width="500"
-            Padding="20"
+            Padding="10"
             Background="#131415"
             CornerRadius="8"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             MouseDown="ContentPanel_MouseDown">
-
-            <DockPanel>
+            <Grid>
+                <!-- Main Content: OCR, prices, trades -->
+                <DockPanel>
                 <!-- Top: OCR text -->
                 <ItemsControl ItemsSource="{Binding OcrLines}" DockPanel.Dock="Top">
                     <ItemsControl.ItemTemplate>
@@ -72,6 +73,31 @@
                     </ItemsControl>
                 </ScrollViewer>
             </DockPanel>
+                <!-- Buttons Overlay -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,4,4,0">
+
+                    <Button Content="?" 
+                        Width="20" Height="20"
+                        Click="HelpButton_Click"
+                        Background="#800000"
+                        Foreground="White"
+                        FontWeight="Bold"
+                        BorderThickness="0"
+                        Margin="0,0,4,0"
+                        ToolTip="Help"/>
+
+                    <Button Content="⚙" Width="20" Height="20" Click="SettingsButton_Click" Background="#8B0000" Foreground="White"
+                        FontWeight="Bold"
+                        BorderThickness="0"
+                        Margin="0,0,4,0"
+                        ToolTip="Settings"/>
+
+
+                    <Button Content="✕" Width="20" Height="20" Background="#800000"  Foreground="White" FontWeight="Bold" BorderThickness="0" Margin="0,0,4,0"
+                         Click="CloseButton_Click" ToolTip="Close"/>
+                </StackPanel>
+            </Grid>
+
 
             <!--<StackPanel>
                 <TextBlock x:Name="OcrText" Text="Your Item Details go Here" Foreground="White" TextWrapping="Wrap" Margin="10"/>

@@ -62,6 +62,22 @@ namespace D2RPriceChecker.Views
             HideOverlay();
         }
 
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+           
+        }
+
+        private void HelpButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            ClearFields();
+            HideOverlay();
+        }
+
         private bool IsClickInsideContent(MouseButtonEventArgs e)
         {
             var source = e.OriginalSource as DependencyObject;
