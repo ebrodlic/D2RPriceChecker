@@ -14,6 +14,7 @@ namespace D2RPriceChecker;
 public partial class App : Application
 {
     public CacheService Cache { get; private set; } = null!;
+    public SettingsService Settings { get; private set; } = null!;
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -21,10 +22,13 @@ public partial class App : Application
         // 1. Create root and cache dirs
         Cache = new CacheService();
 
-        // 2. Initialize logging into Logs/
+        // 2. Load settings
+        Settings = new SettingsService(Cache.RootDir);
+
+        // 3. Initialize logging into Logs/
         LoggingService.Initialize(Cache.RootDir);
 
-        // 3. Show main window (splash)
+        // 4. Show main window (splash)
         MainWindow = new SplashWindow();
         MainWindow.Show();
 

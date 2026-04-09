@@ -56,17 +56,29 @@ namespace D2RPriceChecker.Windows
 
             var menu = new ContextMenuStrip();
             menu.Items.Add("Open", null, (s, e) => { 
-                this.Show();
+                Show();
                 //WindowState = WindowState.Normal;
                 //Topmost = true;
                 //this.Activate();
             });
-            menu.Items.Add("Show Browser", null, (s, e) => { _traderie.Show(); });
+            menu.Items.Add("Show Browser", null, (s, e) => { OpenTraderie(); });
+            menu.Items.Add("Settings", null, (s, e) => { OpenSettings(); });
             menu.Items.Add("Exit", null, (s, e) => { System.Windows.Application.Current.Shutdown(); });
 
             _trayIcon.ContextMenuStrip = menu;
             _trayIcon.DoubleClick += (s, e) => { this.Show(); };
         }
+
+        private void OpenTraderie()
+        {
+            _traderie.Show();
+        }
+
+        private void OpenSettings()
+        {
+            throw new NotImplementedException();
+        }
+
         private void SetupWindows()
         {
             _overlay = new OverlayWindow();
@@ -133,29 +145,14 @@ namespace D2RPriceChecker.Windows
 
             try
             {
-                StartProcessing();
-
-                Stopwatch stopwatch = new Stopwatch();
-
-                // Start measuring time
-                stopwatch.Start();
+                StartProcessing();  
 
                 var detectionResult = RunDetectionPipeline(timestamp);
 
-                // Stop measuring time
-                stopwatch.Stop();
-
-                // Print the elapsed time in milliseconds
-                Console.WriteLine($"Tooltip detection took {stopwatch.ElapsedMilliseconds} ms");
-
-                SavePipelineResultData(timestamp, detectionResult);
-
-                // TODO - add fallback using yolo detection
-                if(!detectionResult.IsTooltipFound())
+                if (!detectionResult.IsTooltipFound())
                     return;
 
-                var segmentationResult = RunSegmentationPipeline(detectionResult.Tooltip!);
-                SavePipelineResultData(timestamp, segmentationResult);
+                var segmentationResult = RunSegmentationPipeline(timestamp, detectionResult.Tooltip!);      
 
                 var itemMetadata = new ItemDetectionPipeline().Run(segmentationResult.TooltipLines[0]);
                 var itemText = await RunOcrPipelineAsync(segmentationResult);
@@ -210,16 +207,48 @@ namespace D2RPriceChecker.Windows
 
         private TooltipDetectionPipelineResult RunDetectionPipeline(string timestamp)
         {
+            Stopwatch stopwatch = new Stopwatch();
+
+            // Start measuring time
+            stopwatch.Start();
+
             var screenshot = _screenshots.CapturePrimaryScreen();
             var detectionResult = new TooltipDetectionPipeline().Run(screenshot);
+
+            if(!detectionResult.IsTooltipFound())
+                detectionResult.Tooltip = new TooltipDetectionPipelineYolo("Models/d2r_tooltip_yolo_best.onnx").Run(screenshot);
+
+
+            // Stop measuring time
+            stopwatch.Stop();
+
+            // Print the elapsed time in milliseconds
+            Console.WriteLine($"Tooltip detection took {stopwatch.ElapsedMilliseconds} ms");
+
+ 
+            SavePipelineResultData(timestamp, detectionResult);
 
             return detectionResult;
         }
 
-        private TooltipLineSegmetnationPipelineResult RunSegmentationPipeline(Bitmap tooltip)
+        private TooltipLineSegmetnationPipelineResult RunSegmentationPipeline(string timestamp, Bitmap tooltip)
         {
+            Stopwatch stopwatch = new Stopwatch();
+
+            // Start measuring time
+            stopwatch.Start();
+
             var settings = new TooltipLineSegmentationPipelineSettings();
             var segmentationResult = new TooltipLineSegmentationPipeline().Run(tooltip, settings);
+
+            // Stop measuring time
+            stopwatch.Stop();
+
+            // Print the elapsed time in milliseconds
+            Console.WriteLine($"Tooltip segmentation took {stopwatch.ElapsedMilliseconds} ms");
+
+            //TODO if save set in settings?
+            SavePipelineResultData(timestamp, segmentationResult);
 
             return segmentationResult;
         }

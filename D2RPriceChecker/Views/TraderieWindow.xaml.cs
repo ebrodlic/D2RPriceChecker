@@ -258,9 +258,6 @@ namespace D2RPriceChecker.Windows
             return tcs.Task;
         }
 
-
-
-
         public async Task<string> ExecuteScriptAsync(string script)
         {
             // Ensure CoreWebView2 is ready

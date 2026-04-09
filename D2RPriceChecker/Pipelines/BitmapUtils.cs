@@ -125,5 +125,27 @@ namespace D2RPriceChecker.Pipelines
             bmp.UnlockBits(bmpData);
             return bmp;
         }
+
+        public static Bitmap LetterboxResize(Bitmap src, int targetWidth, int targetHeight, out float scale, out int xOffset, out int yOffset)
+        {
+            int srcWidth = src.Width;
+            int srcHeight = src.Height;
+
+            scale = Math.Min((float)targetWidth / srcWidth, (float)targetHeight / srcHeight);
+            int newWidth = (int)(srcWidth * scale);
+            int newHeight = (int)(srcHeight * scale);
+
+            xOffset = (targetWidth - newWidth) / 2;
+            yOffset = (targetHeight - newHeight) / 2;
+
+            Bitmap output = new Bitmap(targetWidth, targetHeight);
+            using (Graphics g = Graphics.FromImage(output))
+            {
+                g.Clear(Color.Black); // padding
+                g.DrawImage(src, xOffset, yOffset, newWidth, newHeight);
+            }
+
+            return output;
+        }
     }
 }
