@@ -1,6 +1,5 @@
 ﻿using D2RPriceChecker.Pipelines;
 using D2RPriceChecker.Services;
-using D2RPriceChecker.Util;
 using D2RPriceChecker.ViewModels;
 using D2RPriceChecker.Views;
 using System.Diagnostics;
@@ -10,6 +9,8 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
+
+using D2RPriceChecker.Features.Traderie;
 
 
 namespace D2RPriceChecker.Views
@@ -21,7 +22,7 @@ namespace D2RPriceChecker.Views
 
         // Windows
         private OverlayWindow _overlay = null!;
-        private TraderieWindow _traderie = null!;
+        private TraderieWindow _traderieWindow = null!;
         private SettingsWindow _settings = null!;
 
         //Managers
@@ -30,6 +31,7 @@ namespace D2RPriceChecker.Views
         // Services
         private readonly ScreenshotService _screenshots = new();
         private OcrService _ocrService = null!;
+        private TraderieService _traderieService = null!;
 
         // Flags
         private bool _isProcessing;
@@ -74,7 +76,7 @@ namespace D2RPriceChecker.Views
 
         private void OpenTraderie()
         {
-            _traderie.Show();
+            _traderieWindow.Show();
         }
 
         private void OpenSettings()
@@ -98,13 +100,13 @@ namespace D2RPriceChecker.Views
             //_overlay.Owner = this;
             //_overlay.Hide();
 
-            _traderie = new TraderieWindow();
-            _traderie.Visibility = Visibility.Hidden;
-            _traderie.ShowInTaskbar = false;        
+            _traderieWindow = new TraderieWindow();
+            _traderieWindow.Visibility = Visibility.Hidden;
+            _traderieWindow.ShowInTaskbar = false;        
 
-            _traderie.Show();  // Show the window to initialize WebView2, then hide it immediately
+            _traderieWindow.Show();  // Show the window to initialize WebView2, then hide it immediately
             //_traderie.Owner = this;
-            _traderie.Hide();
+            _traderieWindow.Hide();
 
         }
 
@@ -114,17 +116,20 @@ namespace D2RPriceChecker.Views
             var ocrTask = InitializeOcrAsync();
 
             // 2. Initialize Traderie WebView async
-            var traderieTask = _traderie.InitializeAsync();
+            var traderieTask = _traderieWindow.InitializeAsync();
 
             // 3. Wait for both
             await Task.WhenAll(ocrTask, traderieTask);
 
             // 4. Try to obtain session info for future use
-            await _traderie.TryLoadSessionAsync();
+            await _traderieWindow.TryLoadSessionAsync();
 
             // 5. If no session info, show the traderie window so user can log in for session data
-            if (!_traderie.IsLoggedIn)
-                _traderie.Show(); 
+            if (!_traderieWindow.IsLoggedIn)
+                _traderieWindow.Show();
+
+            // 6. After the window/webview is ready, create a service to expose api functionality.
+            _traderieService = new TraderieService(_traderieWindow);
 
             // 4. Now all resources are ready, safe to setup hotkeys
             SetupHotkeys();
@@ -170,7 +175,7 @@ namespace D2RPriceChecker.Views
                 _overlay.UpdateValues(itemText);
 
                 //TODO - not a fan of traderie window being called to do compute stuff
-                var completedOffers = await _traderie.GetPriceData(itemMetadata, itemText);
+                var completedOffers = await _traderieService.GetPriceDataAsync(itemMetadata, itemText);
 
                 var trades = OffersParser.ParseOffers(completedOffers);
 

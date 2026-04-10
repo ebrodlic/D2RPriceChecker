@@ -1,4 +1,4 @@
-﻿using D2RPriceChecker.Util;
+﻿using D2RPriceChecker.Features.Traderie;
 using D2RPriceChecker.ViewModels;
 using System;
 using System.Collections.Generic;

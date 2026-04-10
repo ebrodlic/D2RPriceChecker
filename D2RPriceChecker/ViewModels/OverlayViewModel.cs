@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using D2RPriceChecker.Util;
 using System.Collections.ObjectModel;
+using D2RPriceChecker.Features.Traderie;
 
 namespace D2RPriceChecker.ViewModels
 {

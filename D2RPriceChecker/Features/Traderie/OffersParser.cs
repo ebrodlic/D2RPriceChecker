@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 
-namespace D2RPriceChecker.Util
+namespace D2RPriceChecker.Features.Traderie
 {
     public class Price
     {
