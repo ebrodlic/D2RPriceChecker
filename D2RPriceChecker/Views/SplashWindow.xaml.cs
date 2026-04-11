@@ -169,12 +169,13 @@ namespace D2RPriceChecker.Views
 
                 var itemMetadata = new ItemDetectionPipeline().Run(segmentationResult.TooltipLines[0]);
                 var itemText = await RunOcrPipelineAsync(segmentationResult);
+                var itemName = itemText[0].Trim();
 
                 //_overlay.Show();
                 _overlay.ShowOverlay();
                 _overlay.UpdateValues(itemText);
 
-                var trades = await _traderieService.GetTradesDataAsync(itemMetadata, itemText);
+                var trades = await _traderieService.GetTradesDataAsync(itemMetadata, itemName);
 
                 _overlay.UpdateValues(trades);
             }

@@ -16,14 +16,14 @@ namespace D2RPriceChecker.Features.Traderie
             _window = window;
         }
 
-        public async Task<List<Trade>> GetTradesDataAsync(ItemMetadata metadata, List<string> text)
+        public async Task<List<Trade>> GetTradesDataAsync(ItemMetadata metadata, string name)
         {
-            var offersJson = await GetOffersDataAsync(metadata, text);
+            var offersJson = await GetOffersDataAsync(metadata, name);
 
             return OffersParser.ParseOffers(offersJson);
         }
 
-        private async Task<string> GetOffersDataAsync(ItemMetadata metadata, List<string> text)
+        private async Task<string> GetOffersDataAsync(ItemMetadata metadata, string name)
         {
             var userId = _window.Session.UserId;
 
@@ -31,8 +31,7 @@ namespace D2RPriceChecker.Features.Traderie
                 metadata.Rarity != ItemRarity.Set)
                 return string.Empty;
 
-            var itemName = text[0].Trim();
-            var encoded = Uri.EscapeDataString(itemName);
+            var encoded = Uri.EscapeDataString(name);
 
             var searchUrl =
                 $"https://traderie.com/api/diablo2resurrected/items?variants=&search={encoded}&tags=true";
