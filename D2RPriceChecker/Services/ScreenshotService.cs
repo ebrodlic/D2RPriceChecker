@@ -2,8 +2,6 @@ using D2RPriceChecker.Util;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
-using System.Windows;
 
 namespace D2RPriceChecker.Services;
 
@@ -21,7 +19,7 @@ public class ScreenshotService
 
         using (var graphics = Graphics.FromImage(bitmap))
         {
-            graphics.CopyFromScreen(0, 0, 0, 0, new System.Drawing.Size(width, height), CopyPixelOperation.SourceCopy);
+            graphics.CopyFromScreen(0, 0, 0, 0, new Size(width, height), CopyPixelOperation.SourceCopy);
         }
 
         return bitmap;
