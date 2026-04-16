@@ -2,6 +2,7 @@
     x:Class="D2RPriceChecker.Views.OverlayWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:conv="clr-namespace:D2RPriceChecker.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:D2RPriceChecker.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -17,6 +18,10 @@
     WindowStyle="None"
     mc:Ignorable="d">
 
+    <Window.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </Window.Resources>
+
     <!--  Fullscreen Dark Overlay  -->
     <Grid x:Name="Root" Background="#80000000">
         <!--  Click outside handler  -->
@@ -28,7 +33,7 @@
         <Border
             x:Name="ContentPanel"
             Width="500"
-            Padding="10"
+            Padding="8"
             HorizontalAlignment="Center"
             VerticalAlignment="Stretch"
             Background="#131415"
@@ -87,206 +92,233 @@
                     </Grid>
 
                     <!--  ================= PRICE SUMMARY =================  -->
-                    <Grid
+
+                    <Border
                         Grid.Row="1"
                         Margin="0,10,0,0"
-                        VerticalAlignment="Center">
+                        Padding="6">
 
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-
-                        <TextBlock
-                            Grid.Row="0"
-                            Margin="0,0,0,6"
-                            VerticalAlignment="Center"
-                            FontSize="12"
-                            Foreground="#888888"
-                            Text="PRICE SUMMARY (IN IST)" />
-
-                        <Grid Grid.Row="1">
-
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="60" />
-                                <ColumnDefinition Width="80" />
-                                <ColumnDefinition Width="60" />
-                                <ColumnDefinition Width="80" />
-                            </Grid.ColumnDefinitions>
+                        <Grid VerticalAlignment="Center">
 
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <!--  ================= FLOOR =================  -->
-                            <TextBlock
+
+                            <StackPanel
                                 Grid.Row="0"
-                                Grid.Column="0"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="Gray"
-                                Text="Floor" />
+                                Margin="0,0,0,6"
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="12"
+                                    Foreground="#888888"
+                                    Text="PRICE SUMMARY (IN IST)" />
 
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="White"
-                                Text="{Binding FloorDisplay}"
-                                TextAlignment="Right" />
+                                <Button
+                                    Width="18"
+                                    Height="18"
+                                    Margin="8,0,0,0"
+                                    Background="#222"
+                                    BorderBrush="#666"
+                                    BorderThickness="1"
+                                    Command="{Binding ToggleRuneInfoPinnedCommand}"
+                                    Content="i"
+                                    Cursor="Hand"
+                                    FontWeight="Bold"
+                                    Foreground="#888"
+                                    MouseEnter="RuneHoverEnter"
+                                    MouseLeave="RuneHoverLeave" />
 
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="2"
-                                Margin="10,0,0,0"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="LightGray"
-                                Text="{Binding FloorEstimateDisplay}" />
-
-
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="3"
-                                Margin="6,0,0,0"
-                                VerticalAlignment="Center"
-                                FontSize="11"
-                                Foreground="#555555"
-                                Text="bottom 15%"
-                                TextAlignment="Right" />
+                            </StackPanel>
 
 
-                            <!--  ================= TYPICAL =================  -->
-                            <TextBlock
-                                Grid.Row="1"
-                                Grid.Column="0"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="Gray"
-                                Text="Typical" />
 
-                            <TextBlock
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="White"
-                                Text="{Binding TypicalDisplay}"
-                                TextAlignment="Right" />
+                            <Grid Grid.Row="1" HorizontalAlignment="Center">
 
-                            <TextBlock
-                                Grid.Row="1"
-                                Grid.Column="2"
-                                Margin="10,0,0,0"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="LightGray"
-                                Text="{Binding TypicalEstimateDisplay}" />
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="160" />
+                                    <ColumnDefinition Width="100" />
+                                </Grid.ColumnDefinitions>
 
-                            <TextBlock
-                                Grid.Row="1"
-                                Grid.Column="3"
-                                VerticalAlignment="Center"
-                                FontSize="11"
-                                Foreground="#555555"
-                                Text="median"
-                                TextAlignment="Right" />
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!--  ================= FLOOR =================  -->
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="Gray"
+                                    Text="Floor" />
+
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="White"
+                                    Text="{Binding FloorDisplay}"
+                                    TextAlignment="Right" />
+
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="2"
+                                    Margin="20,0,0,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="LightGray"
+                                    Text="{Binding FloorEstimateDisplay}" />
 
 
-                            <!--  ================= GOOD =================  -->
-                            <TextBlock
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="3"
+                                    Margin="6,0,0,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="12"
+                                    Foreground="#555555"
+                                    Text="bottom 15%"
+                                    TextAlignment="Right" />
+
+
+                                <!--  ================= TYPICAL =================  -->
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="Gray"
+                                    Text="Typical" />
+
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="White"
+                                    Text="{Binding TypicalDisplay}"
+                                    TextAlignment="Right" />
+
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="2"
+                                    Margin="20,0,0,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="LightGray"
+                                    Text="{Binding TypicalEstimateDisplay}" />
+
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="3"
+                                    VerticalAlignment="Center"
+                                    FontSize="11"
+                                    Foreground="#555555"
+                                    Text="median"
+                                    TextAlignment="Right" />
+
+
+                                <!--  ================= GOOD =================  -->
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="Gray"
+                                    Text="Good" />
+
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="White"
+                                    Text="{Binding GoodDisplay}"
+                                    TextAlignment="Right" />
+
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="2"
+                                    Margin="20,0,0,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="LightGray"
+                                    Text="{Binding GoodEstimateDisplay}" />
+
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="3"
+                                    VerticalAlignment="Center"
+                                    FontSize="11"
+                                    Foreground="#555555"
+                                    Text="top 25%"
+                                    TextAlignment="Right" />
+
+
+                                <!--  ================= HIGH =================  -->
+                                <TextBlock
+                                    Grid.Row="3"
+                                    Grid.Column="0"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="Gray"
+                                    Text="High" />
+
+                                <TextBlock
+                                    Grid.Row="3"
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="White"
+                                    Text="{Binding HighDisplay}"
+                                    TextAlignment="Right" />
+
+                                <TextBlock
+                                    Grid.Row="3"
+                                    Grid.Column="2"
+                                    Margin="20,0,0,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="LightGray"
+                                    Text="{Binding HighEstimateDisplay}" />
+
+                                <TextBlock
+                                    Grid.Row="3"
+                                    Grid.Column="3"
+                                    VerticalAlignment="Center"
+                                    FontSize="11"
+                                    Foreground="#555555"
+                                    Text="top 5%"
+                                    TextAlignment="Right" />
+
+                            </Grid>
+
+                            <!--  SEPARATOR  -->
+                            <Border
                                 Grid.Row="2"
-                                Grid.Column="0"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="Gray"
-                                Text="Good" />
-
-                            <TextBlock
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="White"
-                                Text="{Binding GoodDisplay}"
-                                TextAlignment="Right" />
-
-                            <TextBlock
-                                Grid.Row="2"
-                                Grid.Column="2"
-                                Margin="10,0,0,0"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="LightGray"
-                                Text="{Binding GoodEstimateDisplay}" />
-
-                            <TextBlock
-                                Grid.Row="2"
-                                Grid.Column="3"
-                                VerticalAlignment="Center"
-                                FontSize="11"
-                                Foreground="#555555"
-                                Text="top 25%"
-                                TextAlignment="Right" />
-
-
-                            <!--  ================= HIGH =================  -->
-                            <TextBlock
-                                Grid.Row="3"
-                                Grid.Column="0"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="Gray"
-                                Text="High" />
-
-                            <TextBlock
-                                Grid.Row="3"
-                                Grid.Column="1"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="White"
-                                Text="{Binding HighDisplay}"
-                                TextAlignment="Right" />
-
-                            <TextBlock
-                                Grid.Row="3"
-                                Grid.Column="2"
-                                Margin="10,0,0,0"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="LightGray"
-                                Text="{Binding HighEstimateDisplay}" />
-
-                            <TextBlock
-                                Grid.Row="3"
-                                Grid.Column="3"
-                                VerticalAlignment="Center"
-                                FontSize="11"
-                                Foreground="#555555"
-                                Text="top 5%"
-                                TextAlignment="Right" />
+                                Height="1"
+                                Margin="0,10,0,0"
+                                Background="#2A2A2A"
+                                Opacity="0.6" />
 
                         </Grid>
-
-                        <!--  SEPARATOR  -->
-                        <Border
-                            Grid.Row="2"
-                            Height="1"
-                            Margin="0,10,0,0"
-                            Background="#2A2A2A"
-                            Opacity="0.6" />
-
-                    </Grid>
+                    </Border>
 
                     <!--  ================= RECENT TRADES =================  -->
                     <Grid Grid.Row="2" Margin="0,10,0,0">
 
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
@@ -299,10 +331,76 @@
                             Foreground="#888888"
                             Text="RECENT TRADES" />
 
+                        <Border
+                            Grid.Row="1"
+                            Margin="0,4,0,6"
+                            Padding="6,4"
+                            Background="#1C1C1C"
+                            BorderBrush="{Binding ActivityBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4">
+
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!--  ACTIVITY row  -->
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock
+                                        Grid.Column="0"
+                                        VerticalAlignment="Center"
+                                        FontSize="10"
+                                        Foreground="#777"
+                                        Text="ACTIVITY" />
+
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        FontSize="10"
+                                        FontWeight="SemiBold"
+                                        Foreground="{Binding ActivityTextBrush}"
+                                        Text="{Binding Activity.Display}" />
+                                </Grid>
+
+                                <!--  DISTRIBUTION row  -->
+                                <Grid Grid.Row="1" Margin="0,2,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock
+                                        Grid.Column="0"
+                                        VerticalAlignment="Center"
+                                        FontSize="10"
+                                        Foreground="#666"
+                                        Text="DISTRIBUTION" />
+
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        FontSize="10"
+                                        FontWeight="SemiBold"
+                                        Foreground="#888"
+                                        Text="{Binding Activity.Breakdown}" />
+                                </Grid>
+
+                            </Grid>
+                        </Border>
+
+
+
                         <!--  SCROLL CONTENT  -->
                         <ScrollViewer
                             x:Name="TradesScrollViewer"
-                            Grid.Row="1"
+                            Grid.Row="2"
                             HorizontalScrollBarVisibility="Disabled"
                             VerticalScrollBarVisibility="Hidden">
 
@@ -404,37 +502,16 @@
 
                                                 </ItemsControl>
 
-                                                <!--  ================= PRICES =================  -->
-                                                <ItemsControl
+                                                <!--  ================= PRICE GROUPS =================  -->
+                                                <TextBlock
                                                     Grid.Row="2"
                                                     Margin="0,2,0,0"
-                                                    ItemsSource="{Binding Prices}">
+                                                    FontSize="14"
+                                                    Foreground="White"
+                                                    Text="{Binding Display}"
+                                                    TextWrapping="Wrap" />
 
-                                                    <ItemsControl.ItemTemplate>
-                                                        <DataTemplate>
 
-                                                            <StackPanel Margin="0,1,0,0" Orientation="Horizontal">
-
-                                                                <TextBlock
-                                                                    Width="26"
-                                                                    Foreground="White"
-                                                                    Text="{Binding Quantity}" />
-
-                                                                <TextBlock Foreground="White" Text="x " />
-
-                                                                <TextBlock Foreground="White" Text="{Binding Name}" />
-
-                                                                <TextBlock
-                                                                    Margin="6,0,0,0"
-                                                                    Foreground="LightGray"
-                                                                    Text="{Binding Price}" />
-
-                                                            </StackPanel>
-
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-
-                                                </ItemsControl>
 
                                             </Grid>
                                         </Border>
@@ -447,6 +524,73 @@
                         </ScrollViewer>
                     </Grid>
 
+                </Grid>
+
+                <!--  ================= Tooltip Overlay =================  -->
+                <Grid
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    IsHitTestVisible="False">
+                    <Border
+                        Margin="200,120,0,0"
+                        Padding="10"
+                        Panel.ZIndex="9999"
+                        Background="#FF1A1A1A"
+                        BorderBrush="#444"
+                        BorderThickness="1"
+                        CornerRadius="6"
+                        IsHitTestVisible="False"
+                        Visibility="{Binding IsRuneInfoVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+
+                        <StackPanel>
+
+                            <!--  Title  -->
+                            <TextBlock
+                                Margin="0,0,0,6"
+                                FontSize="12"
+                                Foreground="#AAAAAA"
+                                Text="RUNE VALUES (IN IST)" />
+
+                            <!--  Dynamic list  -->
+                            <ItemsControl ItemsSource="{Binding Statistics.RuneValues}">
+
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+
+                                        <!--  Row  -->
+                                        <Grid Margin="0,1">
+
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="120" />
+                                                <ColumnDefinition Width="50" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--  Short name  -->
+                                            <TextBlock
+                                                Grid.Column="0"
+                                                FontSize="13"
+                                                Foreground="White"
+                                                Text="{Binding ShortName}" />
+
+                                            <!--  Value  -->
+                                            <TextBlock
+                                                Grid.Column="1"
+                                                FontSize="13"
+                                                Foreground="#BBBBBB"
+                                                Text="{Binding IstValue, StringFormat={}{0:0.##}}"
+                                                TextAlignment="Right" />
+
+                                        </Grid>
+
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+
+                            </ItemsControl>
+
+                        </StackPanel>
+
+
+                    </Border>
                 </Grid>
 
                 <!--  Buttons Overlay  -->

@@ -12,7 +12,8 @@ namespace D2RPriceChecker.Features.Traderie.Model
         public List<string> Attributes { get; set; } = new();
         public List<string> Labels { get; set; } = new();
         public List<Price> Prices { get; set; } = new();
-        public DateTime UpdatedAt { get; set; }     
+        public List<PriceGroup> PriceGroups { get; set; } = new();
+        public DateTime UpdatedAt { get; set; }
         public string TimeAgo
         {
             get
@@ -25,5 +26,11 @@ namespace D2RPriceChecker.Features.Traderie.Model
                 return $"{(int)diff.TotalDays}d ago";
             }
         }
+
+        public string Display =>
+            PriceGroups == null
+                ? "-"
+                : string.Join(" OR ",
+                    PriceGroups.Select(g => g.Display));
     }
 }

@@ -105,6 +105,7 @@ namespace D2RPriceChecker.Views
             ViewModel.Trades.Clear();
             foreach (var trade in trades)
                 ViewModel.Trades.Add(trade);
+          
         }
 
         public void UpdateValues(List<string> ocrLines)
@@ -119,6 +120,11 @@ namespace D2RPriceChecker.Views
             ViewModel.Trades.Clear();
             foreach (var trade in trades)
                 ViewModel.Trades.Add(trade);
+            
+
+
+            ViewModel.RecalculateActivity();
+            ViewModel.RefreshPriceGroupsDisplay();
         }
 
         public void UpdateValues(TradeStatistics stats)
@@ -157,6 +163,18 @@ namespace D2RPriceChecker.Views
 
             scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - e.Delta);
             e.Handled = true;
+        }
+
+        private void RuneHoverEnter(object sender, MouseEventArgs e)
+        {
+            if (DataContext is OverlayViewModel vm)
+                vm.RuneInfoHoverEnter();
+        }
+
+        private void RuneHoverLeave(object sender, MouseEventArgs e)
+        {
+            if (DataContext is OverlayViewModel vm)
+                vm.RuneInfoHoverLeave();
         }
 
         public void DisplayText(string text)

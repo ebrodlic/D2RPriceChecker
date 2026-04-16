@@ -85,7 +85,10 @@ namespace D2RPriceChecker.Features.Traderie
                 trade.Prices.Add(new Price
                 {
                     Name = price.GetProperty("name").GetString() ?? "",
-                    Quantity = price.GetProperty("quantity").GetInt32()
+                    Quantity = price.GetProperty("quantity").GetInt32(),
+                    Type = price.GetProperty("type").GetString() ?? "",
+                    Group = price.GetProperty("group").GetInt32()
+
                 });
             }
         }

@@ -171,8 +171,8 @@ namespace D2RPriceChecker.Views
                 var itemText = await RunOcrPipelineAsync(segmentationResult);
                 var itemName = itemText[0].Trim();
 
-                //_overlay.Show();
-                _overlay.ShowOverlay();
+                _overlay.Show();
+                //_overlay.ShowOverlay();
                 _overlay.UpdateValues(itemText);
 
                 var stats = await _traderieService.GetPriceStatisticsAsync(itemMetadata, itemName);

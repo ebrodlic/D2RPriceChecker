@@ -36,8 +36,12 @@ namespace D2RPriceChecker.Features.Traderie
         public async Task<List<Trade>> GetTradesDataAsync(ItemMetadata metadata, string name)
         {
             var offersJson = await GetOffersDataAsync(metadata, name);
+            var offers = OffersParser.ParseOffers(offersJson);
 
-            return OffersParser.ParseOffers(offersJson);
+            // Define Price Groups
+            OffersPostProcessor.Process(offers);
+
+            return offers;
         }
 
         private async Task<string> GetPriceStatisticsDataAsync(ItemMetadata metadata, string name)
