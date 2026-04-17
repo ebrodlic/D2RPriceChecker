@@ -28,7 +28,10 @@ namespace D2RPriceChecker.ViewModels
 
         public TradeActivityInfo Activity { get; set; } = new();
 
-        public double PricePrediction { get; set; } = new();
+        public double PricePrediction { get; set; } = 0;
+
+        public string PricePredictionHint { get; set; } = "";
+
 
         public string PriceGroupsDisplay =>
             Trades.FirstOrDefault()?.PriceGroups == null
@@ -216,8 +219,11 @@ namespace D2RPriceChecker.ViewModels
             var prediction = new PricePredictionService(table);
 
             PricePrediction = prediction.Predict(OcrLines.ToList(), Trades.ToList());
+            PricePredictionHint = "~" + GetRuneHint(PricePrediction) + " ";
 
             OnPropertyChanged(nameof(PricePrediction));
+            OnPropertyChanged(nameof(PricePredictionHint));
+
         }
 
 
