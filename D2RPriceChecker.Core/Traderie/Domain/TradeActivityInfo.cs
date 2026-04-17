@@ -10,7 +10,6 @@ namespace D2RPriceChecker.Core.Traderie.Domain
         public int Last3d { get; set; }
         public int Last7d { get; set; }
         public int Older { get; set; }
-
         public double Score { get; set; }
         public double RecencyBoost { get; set; }
         public double FinalScore { get; set; }

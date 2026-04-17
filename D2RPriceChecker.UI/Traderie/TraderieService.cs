@@ -14,28 +14,38 @@ namespace D2RPriceChecker.UI.Traderie
     internal class TraderieService
     {
         private readonly TraderieWindow _window;
+
+        private readonly JsonSerializerOptions _options;
         public TraderieService(TraderieWindow window)
         {
             _window = window;
-        }
-        public async Task<TradeStatistics> GetPriceStatisticsAsync(ItemMetadata metadata, string name)
-        {
-            var pricesJson = await GetPriceStatisticsDataAsync(metadata, name);
 
-            var options = new JsonSerializerOptions
+            _options = new JsonSerializerOptions()
             {
                 PropertyNameCaseInsensitive = true
             };
+        }
+        public async Task<TradeStatistics> GetPriceStatisticsAsync(string name, ItemMetadata metadata)
+        {
+            (string itemId, _) = await ResolveItemAsync(name);
 
-            var dto = JsonSerializer.Deserialize<TradeStatisticsDto>(pricesJson, options)!;
+            var url = BuildPriceUrl(itemId);
+
+            var json = await _window.RunFetchAsync(url, true);
+
+            var dto = JsonSerializer.Deserialize<TradeStatisticsDto>(json, _options)!;
 
             return TradeStatisticsMapper.Map(dto);
-        }
+        }     
 
-        public async Task<List<Trade>> GetTradesDataAsync(ItemMetadata metadata, string name)
+        public async Task<List<Trade>> GetTradesDataAsync(string name, ItemMetadata metadata)
         {
-            var offersJson = await GetOffersDataAsync(metadata, name);
-            var offers = OffersMapper.ParseOffers(offersJson);
+            var (itemId, _) = await ResolveItemAsync(name);
+
+            var url = BuildOffersUrl(itemId, _window.Session.UserId);
+
+            var json = await _window.RunFetchAsync(url, true);
+            var offers = OffersMapper.ParseOffers(json);
 
             // Define Price Groups
             OffersPostProcessor.Process(offers);
@@ -43,14 +53,8 @@ namespace D2RPriceChecker.UI.Traderie
             return offers;
         }
 
-        private async Task<string> GetPriceStatisticsDataAsync(ItemMetadata metadata, string name)
+        private async Task<(string itemId, string slug)> ResolveItemAsync(string name)
         {
-            var userId = _window.Session.UserId;
-
-            if (metadata.Rarity != ItemRarity.Unique &&
-                metadata.Rarity != ItemRarity.Set)
-                return string.Empty;
-
             var encoded = Uri.EscapeDataString(name);
 
             var searchUrl =
@@ -61,48 +65,49 @@ namespace D2RPriceChecker.UI.Traderie
             using var doc = JsonDocument.Parse(searchJson);
 
             var items = doc.RootElement.GetProperty("items");
+
             if (items.GetArrayLength() == 0)
-                return string.Empty;
+                return (string.Empty, string.Empty);
 
             var itemId = items[0].GetProperty("id").GetString();
             var itemSlug = items[0].GetProperty("slug").GetString();
+
+            return (itemId, itemSlug);
+        }
+
+        private string BuildPriceUrl(string itemId)
+        {
+            // PROPS
+            var platform = "PC";
+            var mode = "softcore";
+            var ladder = "true";
+            var version = "reign of the warlock";
 
             var limit = 100;
 
-            var pricesUrl = $"https://traderie.com/api/diablo2resurrected/items/price-check?item={itemId}&limit={limit}&prop_Ladder=true&prop_Game%20version=reign%20of%20the%20warlock";
+            //prop_Game%20version=reign%20of%20the%20warlock"
 
-            return await _window.RunFetchAsync(pricesUrl, true);
+            var pricesUrl = $"https://traderie.com/api/diablo2resurrected/items/price-check" +
+                            $"?item={itemId}&limit={limit}" +
+                            $"&prop_Ladder={ladder}&prop_Platform={platform}&prop_Mode={mode}";
+
+            return pricesUrl;
         }
- 
-
-        private async Task<string> GetOffersDataAsync(ItemMetadata metadata, string name)
+        private string BuildOffersUrl(string itemId, string userId)
         {
-            var userId = _window.Session.UserId;
+            // PROPS
+            var platform = "PC";
+            var mode = "softcore";
+            var ladder = "true";
+            var version = "reign of the warlock";
 
-            if (metadata.Rarity != ItemRarity.Unique &&
-                metadata.Rarity != ItemRarity.Set)
-                return string.Empty;
+            var page = 0;
 
-            var encoded = Uri.EscapeDataString(name);
+            var offersUrl = $"https://traderie.com/api/diablo2resurrected/offers" +
+                            $"?accepted=true&currBuyer={userId}&completed=true&page={page}&properties=true" +
+                            $"&prop_Platform={platform}&prop_Mode={mode}&prop_Ladder={ladder}&item={itemId}";
 
-            var searchUrl =
-                $"https://traderie.com/api/diablo2resurrected/items?variants=&search={encoded}&tags=true";
-
-            var searchJson = await _window.RunFetchAsync(searchUrl, true);
-
-            using var doc = JsonDocument.Parse(searchJson);
-
-            var items = doc.RootElement.GetProperty("items");
-            if (items.GetArrayLength() == 0)
-                return string.Empty;
-
-            var itemId = items[0].GetProperty("id").GetString();
-            var itemSlug = items[0].GetProperty("slug").GetString();
-
-            var offersUrl =
-                $"https://traderie.com/api/diablo2resurrected/offers?accepted=true&currBuyer={userId}&completed=true&properties=true&prop_Ladder=true&item={itemId}";
-
-            return await _window.RunFetchAsync(offersUrl, true);
+            return offersUrl;
         }
     }
 }

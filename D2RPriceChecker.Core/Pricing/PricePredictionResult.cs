@@ -11,6 +11,6 @@ namespace D2RPriceChecker.Core.Pricing
         public double WeightTotal { get; set; }    // how much support exists
         public int TradeCount { get; set; }        // raw sample size
 
-        public List<MatchedFeature> MatchedFeatures { get; set; } = new();
+        public List<MatchedFeature> MatchedFeatures { get; set; } = new(); // for future use: highlighting matched attributes in description
     }
 }

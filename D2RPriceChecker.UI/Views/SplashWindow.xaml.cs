@@ -153,42 +153,51 @@ namespace D2RPriceChecker.UI.Views
 
         private async void HandlePipelineHotkey()
         {
-            StartProcessing();
-
             try
             {
-                var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+                StartProcessing();
 
-                var detectionResult = RunDetectionPipeline(timestamp);
-
-                if (!detectionResult.IsTooltipFound())
-                    return;
-
-                var segmentationResult = RunSegmentationPipeline(timestamp, detectionResult.Tooltip!);
-
-                var itemMetadata = new ItemDetectionPipeline().Run(segmentationResult.TooltipLines[0]);
-
-                if (!IsSupportedItemType(itemMetadata))
-                    return;
-
-                var itemText = await RunOcrPipelineAsync(segmentationResult);
-                var itemName = itemText[0].Trim();
-
-                _overlay.Show();
-                //_overlay.ShowOverlay();
-                _overlay.UpdateValues(itemText);
-
-                var stats = await _traderieService.GetPriceStatisticsAsync(itemMetadata, itemName);
-                _overlay.UpdateValues(stats);
-
-                var trades = await _traderieService.GetTradesDataAsync(itemMetadata, itemName);
-
-                _overlay.UpdateValues(trades);
+                await RunPipelineAsync();
+            }
+            catch(Exception ex)
+            {
+                LoggingService.Error("Error in HandlePipelineHotkey: ", ex);
             }
             finally
             {
                 StopProcessing();
             }
+        }
+
+        private async Task RunPipelineAsync()
+        {
+            var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+
+            var detectionResult = RunDetectionPipeline(timestamp);
+
+            if (!detectionResult.IsTooltipFound())
+                return;
+
+            var segmentationResult = RunSegmentationPipeline(timestamp, detectionResult.Tooltip!);
+
+            var itemMetadata = new ItemDetectionPipeline().Run(segmentationResult.TooltipLines[0]);
+
+            if (!IsSupportedItemType(itemMetadata))
+                return;
+
+            var itemText = await RunOcrPipelineAsync(segmentationResult);
+            var itemName = itemText[0].Trim();
+
+            _overlay.Show();
+            //_overlay.ShowOverlay();
+            _overlay.UpdateValues(itemText);
+
+            var stats = await _traderieService.GetPriceStatisticsAsync(itemName, itemMetadata);
+            _overlay.UpdateValues(stats);
+
+            var trades = await _traderieService.GetTradesDataAsync(itemName, itemMetadata);
+
+            _overlay.UpdateValues(trades);
         }
 
         private bool IsSupportedItemType(ItemMetadata itemMetadata)
