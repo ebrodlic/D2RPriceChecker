@@ -14,7 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace D2RPriceChecker.Views
+namespace D2RPriceChecker.UI.Views
 {
     /// <summary>
     /// Interaction logic for OverlayWindow.xaml
@@ -124,6 +124,7 @@ namespace D2RPriceChecker.Views
 
             ViewModel.RecalculateActivity();
             ViewModel.RefreshPriceGroupsDisplay();
+            ViewModel.RefreshPricePrediction();
         }
 
         public void UpdateValues(TradeStatistics stats)

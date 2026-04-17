@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using D2RPriceChecker.Core.Traderie.DTO;
+using D2RPriceChecker.Core.Pricing;
 using D2RPriceChecker.Core.Traderie.Domain;
+using D2RPriceChecker.Core.Traderie.DTO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Input;
@@ -27,6 +27,8 @@ namespace D2RPriceChecker.ViewModels
         public ObservableCollection<Trade> Trades { get; set; } = new();
 
         public TradeActivityInfo Activity { get; set; } = new();
+
+        public double PricePrediction { get; set; } = new();
 
         public string PriceGroupsDisplay =>
             Trades.FirstOrDefault()?.PriceGroups == null
@@ -208,7 +210,18 @@ namespace D2RPriceChecker.ViewModels
             OnPropertyChanged(nameof(RuneValuesDisplay));
         }
 
-    
+        public void RefreshPricePrediction()
+        {
+            var table = new RuneValueTable(Statistics.RuneValues);
+            var prediction = new PricePredictionService(table);
+
+            PricePrediction = prediction.Predict(OcrLines.ToList(), Trades.ToList());
+
+            OnPropertyChanged(nameof(PricePrediction));
+        }
+
+
+
 
         private string GetRuneHint(double value)
         {

@@ -1,7 +1,6 @@
 ﻿using D2RPriceChecker.Pipelines;
 using D2RPriceChecker.Services;
 using D2RPriceChecker.ViewModels;
-using D2RPriceChecker.Views;
 using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
@@ -10,9 +9,10 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using D2RPriceChecker.UI.Traderie;
+using System.IO;
 
 
-namespace D2RPriceChecker.Views
+namespace D2RPriceChecker.UI.Views
 {
     public partial class SplashWindow : Window
     {

@@ -11,7 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace D2RPriceChecker.Views
+namespace D2RPriceChecker.UI.Views
 {
     /// <summary>
     /// Interaction logic for SettingsWindow.xaml

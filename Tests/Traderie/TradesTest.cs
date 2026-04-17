@@ -58,8 +58,8 @@ namespace D2RPriceChecker.Tests.Traderie
                   .Select(p => p.Name)
                   .ToList();
 
-            Assert.Contains("Um rune", runeNames);
-            Assert.Contains("Mal rune", runeNames);
+            Assert.Contains("Um Rune", runeNames);
+            Assert.Contains("Mal Rune", runeNames);
         }
     }
 }

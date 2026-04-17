@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace D2RPriceChecker.Converters
+namespace D2RPriceChecker.UI.Converters
 {
     public class OrColorConverter : IValueConverter
     {

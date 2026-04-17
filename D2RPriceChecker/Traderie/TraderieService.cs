@@ -3,7 +3,6 @@ using D2RPriceChecker.Core.Traderie.DTO;
 using D2RPriceChecker.Core.Traderie.Mapping;
 using D2RPriceChecker.Core.Traderie.Domain;
 using D2RPriceChecker.Pipelines;
-using D2RPriceChecker.Views;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;

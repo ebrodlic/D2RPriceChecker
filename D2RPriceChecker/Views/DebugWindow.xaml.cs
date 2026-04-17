@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using WpfAnimatedGif;
 
-namespace D2RPriceChecker.Views;
+namespace D2RPriceChecker.UI.Views;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml

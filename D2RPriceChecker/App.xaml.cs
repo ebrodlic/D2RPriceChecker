@@ -1,12 +1,12 @@
 ﻿using D2RPriceChecker.Services;
-using D2RPriceChecker.Views;
+using D2RPriceChecker.UI.Views;
 using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Windows;
 
-namespace D2RPriceChecker;
+namespace D2RPriceChecker.UI;
 
 /// <summary>
 /// Interaction logic for App.xaml

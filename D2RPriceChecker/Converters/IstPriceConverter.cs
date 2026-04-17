@@ -2,25 +2,21 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using System.Windows;
 using System.Windows.Data;
-
 
 namespace D2RPriceChecker.UI.Converters
 {
-    public class BoolToVisibilityConverter : IValueConverter
+    public class IstPriceConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value is bool b && b
-                ? Visibility.Visible
-                : Visibility.Collapsed;
+            if (value is double d)
+                return $"{d:0.##} Ist";
+
+            return "0 Ist";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return value is Visibility v && v == Visibility.Visible;
-        }
+            => throw new NotImplementedException();
     }
 }
-
