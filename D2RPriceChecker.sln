@@ -2,9 +2,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.4.11626.88 stable
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "D2RPriceChecker.UI", "D2RPriceChecker\D2RPriceChecker.UI.csproj", "{D636EFFC-65F9-0CE9-F40B-D07712603455}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "D2RPriceChecker.UI", "D2RPriceChecker.UI\D2RPriceChecker.UI.csproj", "{D636EFFC-65F9-0CE9-F40B-D07712603455}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "D2RPriceChecker.Tests", "Tests\D2RPriceChecker.Tests.csproj", "{D9C9BC1C-10B5-426E-BEB6-EF9D21CA2777}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "D2RPriceChecker.Tests", "D2RPriceChecker.Tests\D2RPriceChecker.Tests.csproj", "{D9C9BC1C-10B5-426E-BEB6-EF9D21CA2777}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "D2RPriceChecker.Core", "D2RPriceChecker.Core\D2RPriceChecker.Core.csproj", "{F1CC9173-4B1D-4B56-8AD9-B89D845D2357}"
 EndProject
