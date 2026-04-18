@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 
-namespace D2RPriceChecker.Pipelines
+namespace D2RPriceChecker.Core.Pipelines
 {
-    public class TooltipLineSegmetnationPipelineResult
+    public class TooltipLineSegmentationPipelineResult
     {
         public Bitmap Tooltip { get; set; }
         public List<Bitmap> TooltipLines { get; set; }
 
-        public TooltipLineSegmetnationPipelineResult(Bitmap tooltip)
+        public TooltipLineSegmentationPipelineResult(Bitmap tooltip)
         {
             Tooltip = tooltip;
             TooltipLines = new List<Bitmap>();

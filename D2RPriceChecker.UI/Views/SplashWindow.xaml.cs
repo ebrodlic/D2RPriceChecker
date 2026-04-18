@@ -1,5 +1,4 @@
-﻿using D2RPriceChecker.Pipelines;
-using D2RPriceChecker.Services;
+﻿using D2RPriceChecker.Services;
 using D2RPriceChecker.ViewModels;
 using System.Diagnostics;
 using System.Drawing;
@@ -10,6 +9,10 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using D2RPriceChecker.UI.Traderie;
 using System.IO;
+using D2RPriceChecker.Core.Items;
+using D2RPriceChecker.Core.Pipelines;
+using D2RPriceChecker.Pipelines;
+using D2RPriceChecker.UI.Util;
 
 
 namespace D2RPriceChecker.UI.Views
@@ -31,6 +34,9 @@ namespace D2RPriceChecker.UI.Views
         private readonly ScreenshotService _screenshots = new();
         private OcrService _ocrService = null!;
         private TraderieService _traderieService = null!;
+
+        // Data Loaders
+        private IItemBaseNameProvider _itemBaseNameProvider;
 
         // Flags
         private bool _isProcessing;
@@ -130,8 +136,18 @@ namespace D2RPriceChecker.UI.Views
             // 6. After the window/webview is ready, create a service to expose api functionality.
             _traderieService = new TraderieService(_traderieWindow);
 
-            // 4. Now all resources are ready, safe to setup hotkeys
+            // 7. Load static utility data 
+            LoadData();
+
+            // 8. Now all resources are ready, safe to setup hotkeys
             SetupHotkeys();
+        }
+
+        private void LoadData()
+        {
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "bases.txt");
+
+            _itemBaseNameProvider = new FileItemBaseNameProvider(path);
         }
 
         private async Task InitializeOcrAsync()
@@ -153,10 +169,10 @@ namespace D2RPriceChecker.UI.Views
 
         private async void HandlePipelineHotkey()
         {
+            StartProcessing();
+
             try
             {
-                StartProcessing();
-
                 await RunPipelineAsync();
             }
             catch(Exception ex)
@@ -174,42 +190,34 @@ namespace D2RPriceChecker.UI.Views
             var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
 
             var detectionResult = RunDetectionPipeline(timestamp);
-
-            if (!detectionResult.IsTooltipFound())
-                return;
-
             var segmentationResult = RunSegmentationPipeline(timestamp, detectionResult.Tooltip!);
 
-            var itemMetadata = new ItemDetectionPipeline().Run(segmentationResult.TooltipLines[0]);
-
-            if (!IsSupportedItemType(itemMetadata))
-                return;
-
             var itemText = await RunOcrPipelineAsync(segmentationResult);
-            var itemName = itemText[0].Trim();
 
             _overlay.Show();
-            //_overlay.ShowOverlay();
             _overlay.UpdateValues(itemText);
 
-            var stats = await _traderieService.GetPriceStatisticsAsync(itemName, itemMetadata);
-            _overlay.UpdateValues(stats);
+            var item = RunItemAnalysisPipeline(itemText, segmentationResult);
 
-            var trades = await _traderieService.GetTradesDataAsync(itemName, itemMetadata);
+            //TEMPORARY - HANDLE EQUIPMENT ONLY
+            if (item.Type == ItemType.Equipment)
+            {
+                var stats = await _traderieService.GetPriceStatisticsAsync(item);
+                _overlay.UpdateValues(stats);
 
-            _overlay.UpdateValues(trades);
+                var trades = await _traderieService.GetTradesDataAsync(item);
+
+                _overlay.UpdateValues(trades);
+            }
         }
 
-        private bool IsSupportedItemType(ItemMetadata itemMetadata)
+        private Item RunItemAnalysisPipeline(List<string> itemText, TooltipLineSegmentationPipelineResult segmentationResult)
         {
-            if (itemMetadata.Rarity == ItemRarity.Unique)
-                return true;
+            var pipeline = new ItemAnalysisPipeline(_itemBaseNameProvider);
+            var item = pipeline.Run(itemText, segmentationResult);
 
-            if (itemMetadata.Rarity == ItemRarity.Set)
-                return true;
-
-            return false;
-        }
+            return item;
+        }     
 
         private void ToggleOverlay()
         {
@@ -234,7 +242,7 @@ namespace D2RPriceChecker.UI.Views
             ToggleOverlay();
         }
 
-        private async Task<List<string>> RunOcrPipelineAsync(TooltipLineSegmetnationPipelineResult segmentationResult)
+        private async Task<List<string>> RunOcrPipelineAsync(TooltipLineSegmentationPipelineResult segmentationResult)
         {
             return await Task.Run(() =>
             {
@@ -268,7 +276,7 @@ namespace D2RPriceChecker.UI.Views
             return detectionResult;
         }
 
-        private TooltipLineSegmetnationPipelineResult RunSegmentationPipeline(string timestamp, Bitmap tooltip)
+        private TooltipLineSegmentationPipelineResult RunSegmentationPipeline(string timestamp, Bitmap tooltip)
         {
             Stopwatch stopwatch = new Stopwatch();
 
@@ -312,7 +320,7 @@ namespace D2RPriceChecker.UI.Views
 
             datasetManager.Save(timestamp, result);
         }
-        private void SavePipelineResultData(string timestamp, TooltipLineSegmetnationPipelineResult result)
+        private void SavePipelineResultData(string timestamp, TooltipLineSegmentationPipelineResult result)
         {
             var datasetManager = ((App)System.Windows.Application.Current).Cache;
 

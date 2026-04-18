@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace D2RPriceChecker.Pipelines
+namespace D2RPriceChecker.Core.Pipelines
 {
     public class TooltipLineSegmentationPipelineSettings
     {

@@ -13,6 +13,7 @@ using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using WpfAnimatedGif;
+using D2RPriceChecker.Core.Pipelines;
 
 namespace D2RPriceChecker.UI.Views;
 
@@ -135,7 +136,7 @@ public partial class DebugWindow : Window
         throw new NotImplementedException();
     }
 
-    private void PopulateSegmentationImageFields(TooltipLineSegmetnationPipelineResult segmentationResult)
+    private void PopulateSegmentationImageFields(TooltipLineSegmentationPipelineResult segmentationResult)
     {
         if (Application.Current.MainWindow?.IsVisible == false)
             return;
@@ -162,7 +163,7 @@ public partial class DebugWindow : Window
 
         datasetManager.Save(timestamp, result);
     }
-    private void SavePipelineResultData(string timestamp, TooltipLineSegmetnationPipelineResult result)
+    private void SavePipelineResultData(string timestamp, TooltipLineSegmentationPipelineResult result)
     {
         var datasetManager = ((App)Application.Current).Cache;
 

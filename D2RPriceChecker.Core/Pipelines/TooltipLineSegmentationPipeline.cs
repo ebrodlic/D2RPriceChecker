@@ -4,20 +4,19 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO.Pipelines;
 using System.Text;
-using System.Windows.Controls;
 
-namespace D2RPriceChecker.Pipelines
+namespace D2RPriceChecker.Core.Pipelines
 {
-    internal class TooltipLineSegmentationPipeline
+    public class TooltipLineSegmentationPipeline
     {
         private TooltipLineSegmentationPipelineSettings Settings { get; set; }
 
 
-        public TooltipLineSegmetnationPipelineResult Run(Bitmap tooltip, TooltipLineSegmentationPipelineSettings settings)
+        public TooltipLineSegmentationPipelineResult Run(Bitmap tooltip, TooltipLineSegmentationPipelineSettings settings)
         {
             Settings = settings;
 
-            var result = new TooltipLineSegmetnationPipelineResult(tooltip);
+            var result = new TooltipLineSegmentationPipelineResult(tooltip);
 
             //var rowsMask = GetRowsMask(tooltip);
 

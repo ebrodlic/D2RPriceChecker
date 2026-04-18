@@ -1,4 +1,5 @@
 ﻿using D2RPriceChecker.Pipelines;
+using D2RPriceChecker.Core.Pipelines;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
@@ -63,7 +64,7 @@ namespace D2RPriceChecker.Services
                 result.Tooltip?.Save(tooltipPath, ImageFormat.Png);
         }
 
-        public void Save(string id, TooltipLineSegmetnationPipelineResult result)
+        public void Save(string id, TooltipLineSegmentationPipelineResult result)
         {
             if (_saveLines)
             {
