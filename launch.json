@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "D2RCompanion.UI": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

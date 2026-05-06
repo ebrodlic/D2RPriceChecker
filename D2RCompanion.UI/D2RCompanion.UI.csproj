@@ -17,6 +17,7 @@
     <AssemblyName>D2RCompanion</AssemblyName>
     <AssemblyTitle>D2R Companion</AssemblyTitle>
     <Version>0.2.3</Version>
+    <ApplicationIcon>Resources\1.ico</ApplicationIcon>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
@@ -29,6 +30,11 @@
     <None Remove="appsettings.json" />
     <None Remove="Models\d2r_tooltip_crnn_best.onnx" />
     <None Remove="Models\d2r_tooltip_yolo_best.onnx" />
+    <None Remove="Resources\1.ico" />
+    <None Remove="Resources\2.ico" />
+    <None Remove="Resources\3.ico" />
+    <None Remove="Resources\4.ico" />
+    <None Remove="Resources\app.ico" />
     <None Remove="Resources\spinner.gif" />
   </ItemGroup>
 
@@ -43,6 +49,21 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Models\d2r_tooltip_yolo_best.onnx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\1.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\2.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\3.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\4.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\app.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\icon-16x16.ico">

@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Velopack;
 using Velopack.Locators;
+using Velopack.Sources;
 
 namespace D2RCompanion.UI;
 
@@ -42,6 +43,7 @@ public partial class App : System.Windows.Application
         SetupLogging();
         SetupDI();
 
+        // TODO - mb initialize simple services here, like settings
         InitializeTray();
         InitializeView();
 
@@ -98,6 +100,7 @@ public partial class App : System.Windows.Application
         services.AddSingleton<ScreenshotService>();
         services.AddSingleton<PipelineService>();
         services.AddSingleton<HotkeyService>();
+        services.AddSingleton<UpdateService>();
 
         // TODO: temporarily to debug saved images:
         services.AddSingleton<CacheService>();
@@ -129,7 +132,9 @@ public partial class App : System.Windows.Application
 
     private void InitializeTray()
     {
-        var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "icon-16x16.ico");
+        var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "1.ico");
+        var iconText = _appInfo.Name;
+
         var versionText = _appEnvironment.IsDevelopment ? _appInfo.Version : VelopackLocator.Current.CurrentlyInstalledVersion?.ToString();
 
         _trayIcon = new NotifyIcon()
@@ -159,15 +164,15 @@ public partial class App : System.Windows.Application
 
         try
         {
-            var mgr = new UpdateManager("https://github.com/ebrodlic/D2RCompanion");
-            var update = await mgr.CheckForUpdatesAsync();
+            var updates = _provider.GetRequiredService<UpdateService>();
+            var update = await updates.CheckAsync();
 
             if (update == null)
                 return;
 
             _logger.LogInformation("Update found, downloading!");
 
-            await mgr.DownloadUpdatesAsync(update);
+            await updates.DownloadAsync(update);
 
             var result = System.Windows.MessageBox.Show(
                 "Update Ready, the app will restart",
@@ -177,12 +182,12 @@ public partial class App : System.Windows.Application
 
             if(result == MessageBoxResult.OK)
             {
-                mgr.ApplyUpdatesAndRestart(update);
+                updates.ApplyAndRestart(update);
             }
         }
         catch (Exception ex)
         {
-
+            _logger.LogError("Error in update check: " +  ex.Message);
         }
     }
 
