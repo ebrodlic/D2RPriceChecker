@@ -59,18 +59,43 @@ namespace D2RCompanion.UI.Windows
             CreateTraderieWebViewControl();
         }
 
+        public void HideOverlayContent()
+        {
+            Root.Opacity = 0;
+            Root.IsHitTestVisible = false;
+        }
+
+        public void ShowOverlayContent()
+        {
+            Root.Opacity = 1;
+            Root.IsHitTestVisible = true;
+            Topmost = true;
+
+            Activate();
+        }
+
         private void SetMessageHandlers()
         {
             WeakReferenceMessenger.Default.Register<OverlayVisibilityRequestMessage>(this, (r, m) =>
             {
                 if (m.IsVisible)
                 {
-                    Show();
+                    ShowOverlayContent();
                 }
                 else
                 {
-                    Hide();
+                    HideOverlayContent();
                 }
+
+
+                //if (m.IsVisible)
+                //{
+                //    Show();
+                //}
+                //else
+                //{
+                //    Hide();
+                //}
             });
 
             WeakReferenceMessenger.Default.Register<TraderieVisibilityRequestMessage>(this, (r, m) =>
@@ -148,26 +173,37 @@ namespace D2RCompanion.UI.Windows
 
         private async void ToggleVisibility()
         {
-            if (Visibility == Visibility.Visible)
-                Hide();
+            if (Root.Opacity == 0)
+            {
+                ShowOverlayContent();
+
+            }
             else
             {
-                Show();
+                HideOverlayContent();
             }
+
+
+            //if (Visibility == Visibility.Visible)
+            //    Hide();
+            //else
+            //{
+            //    Show();
+            //}
         }
 
         private void OnBackgroundClicked(object sender, MouseButtonEventArgs e)
         {
             if (e.OriginalSource == Root)
             {
-                Hide();
+                HideOverlayContent();
             }
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
-                Hide();
+                HideOverlayContent();
         }
     }
 }

@@ -34,6 +34,7 @@
     <None Remove="Resources\2.ico" />
     <None Remove="Resources\3.ico" />
     <None Remove="Resources\4.ico" />
+    <None Remove="Resources\5.ico" />
     <None Remove="Resources\app.ico" />
     <None Remove="Resources\spinner.gif" />
   </ItemGroup>
@@ -61,6 +62,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\4.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\5.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\app.ico">

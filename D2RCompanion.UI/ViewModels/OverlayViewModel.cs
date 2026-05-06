@@ -88,6 +88,7 @@ namespace D2RCompanion.UI.ViewModels
             }
             catch (Exception ex)
             {
+
             }
             finally
             {

@@ -195,10 +195,10 @@ public partial class App : System.Windows.Application
     {
         var overlay = _provider.GetRequiredService<OverlayWindow>();
 
-        MainWindow = overlay;
+        overlay.Show();
+        overlay.HideOverlayContent();
 
-        MainWindow.Show();
-        MainWindow.Hide();
+        MainWindow = overlay;
     }
 
     private async Task InitializeBackgroundAsync()

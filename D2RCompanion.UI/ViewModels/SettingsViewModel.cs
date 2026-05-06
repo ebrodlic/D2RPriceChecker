@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -15,14 +16,16 @@ namespace D2RCompanion.UI.ViewModels
     {
 
         [RelayCommand]
-        public void CloseSettings()
+        public async Task CloseSettings()
         {
-            WeakReferenceMessenger.Default.Send(
-                new NavigationRequestMessage(OverlayContentView.Home));
-
             WeakReferenceMessenger.Default.Send(
                 new OverlayVisibilityRequestMessage(false)
             );
+
+            await Task.Delay(50);
+
+            WeakReferenceMessenger.Default.Send(
+                new NavigationRequestMessage(OverlayContentView.Home));
         }
     }
 }
