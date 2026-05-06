@@ -43,7 +43,7 @@ namespace D2RCompanion.UI.Controls
             _homeUrl = config.GetValue<string>("Traderie:HomeUrl");
 
             _userDataFolder = System.IO.Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 appInfo.Id,
                 "Traderie");
 
